@@ -1,0 +1,48 @@
+name: Publish NuGet
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Build
+      run: dotnet build ./src/Initium/Initium.csproj --configuration Release
+
+    - name: Bump Version
+      run: |
+        chmod +x "${GITHUB_WORKSPACE}/.github/bump.sh"
+        "${GITHUB_WORKSPACE}/.github/bump.sh"
+
+    - name: Pack NuGet Package
+      run: dotnet pack ./src/Initium/Initium.csproj --configuration Release --output ./nupkg
+      
+    - name: Push to NuGet
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+      run: dotnet nuget push "./nupkg/*.nupkg" --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json --skip-duplicate
+
+    - name: Push to GitHub NuGet
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: dotnet nuget push "./nupkg/*.nupkg" --api-key $GITHUB_TOKEN --source "https://nuget.pkg.github.com/imclint21/index.json" --skip-duplicate
+
+    - name: Remove Packages
+      run: rm -rf *.nupkg ./nupkg
+
+    - uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: Bump Version

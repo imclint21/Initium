@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<LangVersion>default</LangVersion>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AssemblyName>Initium</AssemblyName>
+		<RootNamespace>Initium</RootNamespace>
+		<Version>0.1.3</Version>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageId>Initium</PackageId>
+		<Title>Initium</Title>
+		<Authors>clint21.eth</Authors>
+		<Description>Initium is a .NET library that simplifies building APIs by standardizing service management, routing, and response handling. </Description>
+		<RepositoryUrl>https://github.com/imclint21/Initium</RepositoryUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+		<PackageTags>dotnet,api-development,api-controllers,middleware,extensions-library,service-layer,Initium,framework,modular-design,csharp,system-text-json,dependency-injection,rest-api,http-response,code-simplification,code-standardization,saas-development,backend-development,microservices,web-apis,enterprise-applications,clean-code,developer-productivity,lightweight,extensible,easy-to-use,software-development,open-source,developer-tools,application-framework </PackageTags>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+	  <NoWarn>1701;1702;NU1902;NU1903;NU1904</NoWarn>
+	</PropertyGroup>
+ 
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" Version="2.2.8"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5"/>
+		<PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0"/>
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1"/>
+		<PackageReference Include="Tapper.Attributes" Version="1.13.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="../../README.md" Pack="true" PackagePath="\"/>
+		<None Include="../../LICENSE.md" Pack="true" PackagePath="\"/>
+	</ItemGroup>
+</Project>
