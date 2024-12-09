@@ -1,7 +1,7 @@
 using Initium.Response;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Initium;
+namespace Initium.Results;
 
 /// <summary>
 /// Represents a custom result for invalid model state, returned as a JSON response with standardized API response structure.

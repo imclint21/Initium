@@ -1,10 +1,10 @@
 using System.Net;
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Mvc;
 using Initium.Exceptions;
 using Initium.Infrastructure;
+using Microsoft.AspNetCore.Mvc;
 
-namespace Initium;
+namespace Initium.Results;
 
 /// <summary>
 /// Represents a result for a service operation, indicating success or failure with an optional message and status code.
