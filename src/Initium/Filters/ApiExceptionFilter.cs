@@ -28,22 +28,22 @@ internal class ApiExceptionFilter : IExceptionFilter
 				apiResponse.StatusCode = (int)HttpStatusCode.InternalServerError;
 				break;
 			
-			case ApiException apiException:
-				apiResponse.Message = apiException.Message;
-				apiResponse.StatusCode = (int)apiException.StatusCode;
+			case ApiException ex:
+				// TODO: Not persistent: "Exception of type 'Initium.Exceptions.ApiException' was thrown."
+				apiResponse.Message = ex.Message;
+				apiResponse.StatusCode = (int)ex.StatusCode;
 				break;
 			
-			case NotImplementedException notImplementedException:
-				apiResponse.Message = notImplementedException.Message;
+			case NotImplementedException ex:
+				apiResponse.Message = ex.Message;
 				apiResponse.StatusCode = (int)HttpStatusCode.NotImplemented;
 				break;
 		}
 
+		context.ExceptionHandled = true;
 		context.Result = new JsonResult(apiResponse)
 		{
 			StatusCode = apiResponse.StatusCode
 		};
-
-		context.ExceptionHandled = true;
 	}
 }
