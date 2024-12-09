@@ -25,14 +25,18 @@ internal class ApiResponseFilter : ActionFilterAttribute
         var actionDescriptor = context.ActionDescriptor;
         var apiResponseAttributes = ApiResponseHelper.GetApiResponseAttributes(actionDescriptor);
 
+        var statusCode = (int?)serviceResult.StatusCode ?? context.HttpContext.Response.StatusCode;
+        
         // Find the matching ApiResponseAttribute based on the HTTP status code.
         var matchingAttribute = apiResponseAttributes.FirstOrDefault(attribute =>
-            attribute.StatusCode == (int)serviceResult.StatusCode);
+            attribute.StatusCode == statusCode);
 
         // Create an ApiResponse object, including HTTP context details.
         var apiResponse = ApiResponse.CreateFromHttpContext(context.HttpContext);
-        apiResponse.Message = matchingAttribute?.Message ?? serviceResult.Message;
-        apiResponse.StatusCode = (int)(serviceResult.StatusCode ?? HttpStatusCode.InternalServerError);
+        apiResponse.StatusCode = statusCode;
+        apiResponse.Message = serviceResult.Message 
+                              ?? matchingAttribute?.Message 
+                              ?? ApiResponseHelper.GetDefaultMessageForStatusCode(apiResponse.StatusCode);
 
         context.Result = new JsonResult(apiResponse)
         {
