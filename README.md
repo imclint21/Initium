@@ -3,6 +3,7 @@
 [![Publish NuGet](https://github.com/imclint21/Initium/actions/workflows/publish.yml/badge.svg?branch=master)](https://github.com/imclint21/Initium/actions/workflows/publish.yml)
 ![DotNet](https://img.shields.io/badge/.NET-8.0%20LTS-blue)
 ![MIT License](https://img.shields.io/badge/license-MIT-lightgrey.svg)
+![NuGet Version](https://img.shields.io/nuget/v/Initium)
 
 ## Introduction
 
