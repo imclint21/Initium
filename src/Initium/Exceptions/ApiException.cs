@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 
 namespace Initium.Exceptions;
@@ -5,6 +6,7 @@ namespace Initium.Exceptions;
 /// <summary>
 /// Represents an exception specific to API behavior with additional context like HTTP status code and custom messages.
 /// </summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public class ApiException : Exception
 {
 	/// <summary>
@@ -16,7 +18,7 @@ public class ApiException : Exception
 	/// Initializes a new instance of the <see cref="ApiException"/> class with a specified HTTP status code.
 	/// </summary>
 	/// <param name="statusCode">The HTTP status code associated with this exception.</param>
-	public ApiException(HttpStatusCode statusCode)
+	public ApiException(HttpStatusCode statusCode = HttpStatusCode.InternalServerError)
 	{
 		StatusCode = statusCode;
 	}
