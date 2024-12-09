@@ -1,8 +1,8 @@
-using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Initium.Helpers;
 using Initium.Response;
+using Initium.Results;
 
 namespace Initium.Filters;
 

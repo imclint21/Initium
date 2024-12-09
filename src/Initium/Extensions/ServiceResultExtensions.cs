@@ -1,3 +1,5 @@
+using Initium.Results;
+
 namespace Initium.Extensions;
 
 /// <summary>
