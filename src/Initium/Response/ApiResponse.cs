@@ -27,6 +27,9 @@ public class ApiResponse
 	/// </summary>
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	public RequestDetails? RequestDetails { get; set; } = new();
+	
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public IEnumerable<ApiError>? Errors { get; set; }
 
 	/// <summary>
 	/// Creates an <see cref="ApiResponse"/> instance from the provided <see cref="HttpContext"/>.
