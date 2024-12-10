@@ -103,4 +103,14 @@ internal class ApiResponseBuilder
     {
         StatusCode = _apiResponse.StatusCode
     };
+
+    public ApiResponseBuilder WithCustomHeader(string headerName, string headerValue)
+    {
+        if (string.IsNullOrWhiteSpace(headerName))
+            throw new ArgumentException("Header name cannot be null or empty.", nameof(headerName));
+
+        _apiResponse.CustomHeaders ??= new Dictionary<string, string>();
+        _apiResponse.CustomHeaders[headerName] = headerValue;
+        return this;
+    }
 }
