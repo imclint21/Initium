@@ -67,6 +67,19 @@ public class ServiceResult : BaseResult
         StatusCode = statusCode
     };
 
+
+    /// <summary>
+    /// Creates a failed <see cref="ServiceResult"/> with an exception message.
+    /// </summary>
+    /// <param name="exception">The exception whose message will be used to describe the error.</param>
+    /// <returns>A failed <see cref="ServiceResult"/> with an exception message.</returns>
+    public static ServiceResult Error(Exception exception) => new()
+    {
+        Success = false,
+        Message = exception.Message,
+        StatusCode = HttpStatusCode.InternalServerError
+    };
+
     /// <summary>
     /// Chains the current result with another operation if the current result is successful.
     /// </summary>
@@ -74,6 +87,25 @@ public class ServiceResult : BaseResult
     /// <returns>The result of the next operation if the current result is successful; otherwise, the current result.</returns>
     public ServiceResult ChainWith(Func<ServiceResult> next) => !this ? this : next();
 
+    public ServiceResult WithMessage(string message)
+    {
+        Message = message;
+        return this;
+    }
+
+    public ServiceResult WithStatusCode(HttpStatusCode statusCode)
+    {
+        StatusCode = statusCode;
+        return this;
+    }
+    
+    public ServiceResult WithMetadata(string key, string value)
+    {
+        Metadata ??= new Dictionary<string, string>();
+        Metadata[key] = value;
+        return this;
+    }
+    
     /// <summary>
     /// Converts the current <see cref="ServiceResult"/> into an <see cref="ActionResult"/> for use in ASP.NET Core.
     /// </summary>
