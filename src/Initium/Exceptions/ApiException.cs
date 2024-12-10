@@ -32,6 +32,16 @@ public class ApiException : Exception
 	{
 		StatusCode = statusCode;
 	}
+	
+	/// <summary>
+	/// Initializes a new instance of the <see cref="ApiException"/> class with a specified message.
+	/// </summary>
+	/// <param name="message">The message describing the error.</param>
+	public ApiException(string message) : base(message)
+	{
+		// TODO: Define proper error code.
+		// StatusCode = statusCode;
+	}
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="ApiException"/> class with a specified HTTP status code, message, and inner exception.
