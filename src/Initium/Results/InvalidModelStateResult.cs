@@ -1,4 +1,5 @@
 using Initium.Response;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Initium.Results;
@@ -15,14 +16,10 @@ public class InvalidModelStateResult : JsonResult
 	public InvalidModelStateResult(ActionContext actionContext) : base(actionContext)
 	{
 		// Create a standardized API response using the HTTP context.
-		var apiResponse = ApiResponse.CreateFromHttpContext(actionContext.HttpContext);
-
-		// Set the response properties.
-		apiResponse.Message = "One or more validation errors occurred.";
-		apiResponse.StatusCode = 400;
-
-		// Assign the response details to the JsonResult properties.
-		StatusCode = apiResponse.StatusCode;
-		Value = apiResponse;
+		StatusCode = StatusCodes.Status400BadRequest;
+		Value = ApiResponseBuilder.CreateFromContext(actionContext.HttpContext)
+			.WithMessage("One or more validation errors occurred.")
+			.WithStatusCode(StatusCodes.Status400BadRequest)
+			.Build();
 	}
 }
