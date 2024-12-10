@@ -30,6 +30,6 @@ public class ApiResponse
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	public IEnumerable<ApiError>? Errors { get; set; }
 
-	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	[JsonIgnore(Condition = JsonIgnoreCondition.Always)]
 	public Dictionary<string, string>? CustomHeaders { get; set; }
 }

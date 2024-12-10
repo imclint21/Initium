@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Text.Json.Serialization;
 using Initium.Exceptions;
@@ -9,6 +10,7 @@ namespace Initium.Results;
 /// <summary>
 /// Represents a result for a service operation, indicating success or failure with an optional message and status code.
 /// </summary>
+[SuppressMessage("Performance", "CA1822:Mark members as static")]
 public class ServiceResult : BaseResult
 {
     /// <summary>
