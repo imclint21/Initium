@@ -32,15 +32,12 @@ internal class ApiResponseFilter : ActionFilterAttribute
             attribute.StatusCode == statusCode);
 
         // Create an ApiResponse object, including HTTP context details.
-        var apiResponse = ApiResponse.CreateFromHttpContext(context.HttpContext);
-        apiResponse.StatusCode = statusCode;
-        apiResponse.Message = serviceResult.Message 
-                              ?? matchingAttribute?.Message 
-                              ?? ApiResponseHelper.GetDefaultMessageForStatusCode(apiResponse.StatusCode);
-
-        context.Result = new JsonResult(apiResponse)
-        {
-            StatusCode = apiResponse.StatusCode
-        };
+        context.Result = ApiResponseBuilder
+            .CreateFromContext(context.HttpContext)
+            .WithStatusCode(statusCode)
+            .WithMessage(serviceResult.Message 
+                         ?? matchingAttribute?.Message 
+                         ?? ApiResponseHelper.GetDefaultMessageForStatusCode(statusCode))
+            .BuildAsJsonResult();
     }
 }

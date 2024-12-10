@@ -19,31 +19,41 @@ internal class ApiExceptionFilter : IExceptionFilter
 	/// <param name="context">The context for the exception.</param>
 	public void OnException(ExceptionContext context)
 	{
-		// Create a base ApiResponse object, including HTTP context details.
-		var apiResponse = ApiResponse.CreateFromHttpContext(context.HttpContext);
-		switch (context.Exception)
+		// Start building the ApiResponse using the Fluent Builder
+		var apiResponseBuilder = ApiResponseBuilder.CreateFromContext(context.HttpContext);
+
+		// Use pattern switch to handle exceptions
+		context.Result = context.Exception switch
 		{
-			default:
-				apiResponse.Message = "An unexpected error occurred.";
-				apiResponse.StatusCode = (int)HttpStatusCode.InternalServerError;
-				break;
-			
-			case ApiException ex:
-				// TODO: Not persistent: "Exception of type 'Initium.Exceptions.ApiException' was thrown."
-				apiResponse.Message = ex.Message;
-				apiResponse.StatusCode = (int)ex.StatusCode;
-				break;
-			
-			case NotImplementedException ex:
-				apiResponse.Message = ex.Message;
-				apiResponse.StatusCode = (int)HttpStatusCode.NotImplemented;
-				break;
-		}
+			ApiException ex => apiResponseBuilder
+				.WithMessage(ex.Message)
+				.WithStatusCode((int)ex.StatusCode)
+				.BuildAsJsonResult(),
+
+			NotImplementedException ex => apiResponseBuilder
+				.WithMessage(ex.Message)
+				.WithStatusCode((int)HttpStatusCode.NotImplemented)
+				.BuildAsJsonResult(),
+
+			_ => apiResponseBuilder
+				.WithMessage("An unexpected error occurred.")
+				.WithStatusCode((int)HttpStatusCode.InternalServerError)
+				.BuildAsJsonResult()
+		};
 
 		context.ExceptionHandled = true;
-		context.Result = new JsonResult(apiResponse)
-		{
-			StatusCode = apiResponse.StatusCode
-		};
 	}
 }
+//
+// public static implicit operator ActionResult(ServiceResult result)
+// {
+// 	if (result.Success && result.StatusCode == HttpStatusCode.NoContent)
+// 	{
+// 		return new NoContentResult();
+// 	}
+//
+// 	return new ObjectResult(result)
+// 	{
+// 		StatusCode = (int)result.StatusCode
+// 	};
+// }
