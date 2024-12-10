@@ -9,8 +9,7 @@ namespace Initium.Infrastructure;
 /// This class can be extended or used as a base for more specific result types,
 /// providing details such as success state, messages, status codes, and metadata.
 /// </remarks>
-[Obsolete("Move to internal?")]
-public abstract class BaseResult
+internal abstract class BaseResult
 {
 	/// <summary>
 	/// Gets or sets a value indicating whether the operation was successful.
