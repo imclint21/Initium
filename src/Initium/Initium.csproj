@@ -16,6 +16,7 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
 		<PackageTags>dotnet,api-development,api-controllers,middleware,extensions-library,service-layer,Initium,framework,modular-design,csharp,system-text-json,dependency-injection,rest-api,http-response,code-simplification,code-standardization,saas-development,backend-development,microservices,web-apis,enterprise-applications,clean-code,developer-productivity,lightweight,extensible,easy-to-use,software-development,open-source,developer-tools,application-framework </PackageTags>
+		<PackageIcon>logo.png</PackageIcon>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
 	  <NoWarn>1701;1702;NU1902;NU1903;NU1904</NoWarn>
