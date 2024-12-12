@@ -117,6 +117,18 @@ public class ServiceResult : BaseResult
     /// </summary>
     /// <param name="result">The <see cref="ServiceResult"/> to convert.</param>
     public static implicit operator bool(ServiceResult result) => result.Success;
+    
+    /// <summary>
+    /// Converts a boolean value to a <see cref="ServiceResult"/>.
+    /// </summary>
+    /// <param name="isSuccess">
+    /// A boolean indicating the result status: <c>true</c> for success, <c>false</c> for an error.
+    /// </param>
+    /// <returns>
+    /// A <see cref="ServiceResult"/> instance representing the success or error state.
+    /// </returns>
+    public static implicit operator ServiceResult(bool isSuccess) => isSuccess ? Ok() : Error();
+
 }
 
 /// <summary>
