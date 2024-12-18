@@ -1,7 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Net;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Initium.Response;
 
@@ -59,9 +61,9 @@ internal class ApiResponseBuilder
     /// </summary>
     /// <param name="statusCode">The HTTP status code to include in the response.</param>
     /// <returns>The current instance of the <see cref="ApiResponseBuilder"/>.</returns>
-    public ApiResponseBuilder WithStatusCode(int statusCode)
+    public ApiResponseBuilder WithStatusCode(HttpStatusCode statusCode)
     {
-        _apiResponse.StatusCode = statusCode;
+        _apiResponse.StatusCode = (int)statusCode;
         return this;
     }
 

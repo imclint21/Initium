@@ -5,20 +5,12 @@ namespace Initium.Attributes;
 
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = true)]
-public class ApiResponseAttribute : Attribute
+public class ApiResponseAttribute(HttpStatusCode statusCode, string message) : Attribute
 {
-	public int StatusCode { get; }
-	public string Message { get; }
+	public HttpStatusCode StatusCode { get; } = statusCode;
+	public string Message { get; } = message;
 
-	public ApiResponseAttribute(HttpStatusCode statusCode, string message)
+	public ApiResponseAttribute(int statusCode, string message) : this((HttpStatusCode)statusCode, message)
 	{
-		StatusCode = (int)statusCode;
-		Message = message;
-	}
-
-	public ApiResponseAttribute(int statusCode, string message)
-	{
-		StatusCode = statusCode;
-		Message = message;
 	}
 }

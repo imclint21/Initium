@@ -25,7 +25,7 @@ public class ServiceResult : BaseResult
     /// <param name="message">An optional message describing the result.</param>
     /// <param name="statusCode">The HTTP status code associated with the result. Defaults to <see cref="HttpStatusCode.OK"/>.</param>
     /// <returns>A successful <see cref="ServiceResult"/>.</returns>
-    public static ServiceResult Ok(string? message = null, HttpStatusCode statusCode = HttpStatusCode.OK) => new()
+    public static ServiceResult Ok(string? message = null, HttpStatusCode? statusCode = null) => new()
     {
         Success = true,
         Message = message,
@@ -49,7 +49,7 @@ public class ServiceResult : BaseResult
     /// <param name="message">An optional message describing the error.</param>
     /// <param name="statusCode">The HTTP status code associated with the error. Defaults to <see cref="HttpStatusCode.BadRequest"/>.</param>
     /// <returns>A failed <see cref="ServiceResult"/>.</returns>
-    public static ServiceResult Error(string? message = null, HttpStatusCode statusCode = HttpStatusCode.BadRequest) => new()
+    public static ServiceResult Error(string? message = null, HttpStatusCode? statusCode = null) => new()
     {
         Success = false,
         Message = message,
@@ -101,7 +101,7 @@ public class ServiceResult : BaseResult
     
     public ServiceResult WithMetadata(string key, string value)
     {
-        Metadata ??= new Dictionary<string, string>();
+        // Metadata ??= new Dictionary<string, string>();
         Metadata[key] = value;
         return this;
     }
@@ -149,7 +149,7 @@ public class ServiceResult<TData> : ServiceResult
     /// <param name="message">An optional message describing the result.</param>
     /// <param name="statusCode">The HTTP status code associated with the result. Defaults to <see cref="HttpStatusCode.OK"/>.</param>
     /// <returns>A successful <see cref="ServiceResult{TData}"/>.</returns>
-    public static ServiceResult<TData> Ok(TData data, string? message = null, HttpStatusCode statusCode = HttpStatusCode.OK) => new()
+    public static ServiceResult<TData> Ok(TData data, string? message = null, HttpStatusCode? statusCode = null) => new()
     {
         Success = true,
         Data = data,
@@ -163,7 +163,7 @@ public class ServiceResult<TData> : ServiceResult
     /// <param name="data">The data returned by the operation.</param>
     /// <param name="statusCode">The HTTP status code associated with the result.</param>
     /// <returns>A successful <see cref="ServiceResult{TData}"/>.</returns>
-    public static ServiceResult<TData> Ok(TData data, HttpStatusCode statusCode) => new()
+    public static ServiceResult<TData> Ok(TData data, HttpStatusCode? statusCode = null) => new()
     {
         Success = true,
         Data = data,
@@ -176,7 +176,7 @@ public class ServiceResult<TData> : ServiceResult
     /// <param name="message">An optional message describing the error.</param>
     /// <param name="statusCode">The HTTP status code associated with the error. Defaults to <see cref="HttpStatusCode.BadRequest"/>.</param>
     /// <returns>A failed <see cref="ServiceResult{TData}"/>.</returns>
-    public new static ServiceResult<TData> Error(string? message = null, HttpStatusCode statusCode = HttpStatusCode.BadRequest) => new()
+    public new static ServiceResult<TData> Error(string? message = null, HttpStatusCode? statusCode = null) => new()
     {
         Success = false,
         Message = message,

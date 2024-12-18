@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Net;
 using FluentValidation;
 using Initium.Response;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Initium.Attributes;
@@ -32,7 +32,7 @@ public class ValidateModelAttribute(Type validatorType) : Attribute, IActionFilt
 		context.Result = ApiResponseBuilder
 			.CreateFromContext(context.HttpContext)
 			.WithMessage("One or more validation errors occurred.")
-			.WithStatusCode(StatusCodes.Status400BadRequest)
+			.WithStatusCode(HttpStatusCode.BadRequest)
 			.WithErrors(validationResult.Errors)
 			.BuildAsJsonResult();
 	}

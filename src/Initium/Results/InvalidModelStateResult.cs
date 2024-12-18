@@ -19,7 +19,7 @@ public class InvalidModelStateResult : JsonResult
 		StatusCode = StatusCodes.Status400BadRequest;
 		Value = ApiResponseBuilder.CreateFromContext(actionContext.HttpContext)
 			.WithMessage("One or more validation errors occurred.")
-			.WithStatusCode(StatusCodes.Status400BadRequest)
+			.WithStatusCode(HttpStatusCode.BadRequest)
 			.Build();
 	}
 }

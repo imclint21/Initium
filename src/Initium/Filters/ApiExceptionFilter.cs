@@ -26,17 +26,17 @@ internal class ApiExceptionFilter : IExceptionFilter
 		{
 			ApiException ex => apiResponseBuilder
 				.WithMessage(ex.Message)
-				.WithStatusCode((int)ex.StatusCode)
+				.WithStatusCode(ex.StatusCode)
 				.BuildAsJsonResult(),
 
 			NotImplementedException ex => apiResponseBuilder
 				.WithMessage(ex.Message)
-				.WithStatusCode((int)HttpStatusCode.NotImplemented)
+				.WithStatusCode(HttpStatusCode.NotImplemented)
 				.BuildAsJsonResult(),
 
 			_ => apiResponseBuilder
 				.WithMessage("An unexpected error occurred.")
-				.WithStatusCode((int)HttpStatusCode.InternalServerError)
+				.WithStatusCode(HttpStatusCode.InternalServerError)
 				.BuildAsJsonResult()
 		};
 

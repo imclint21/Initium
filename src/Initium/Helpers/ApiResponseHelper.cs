@@ -1,6 +1,8 @@
+using System.Net;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Initium.Attributes;
+using Microsoft.AspNetCore.Http;
 
 namespace Initium.Helpers;
 
@@ -41,17 +43,24 @@ internal static class ApiResponseHelper
     /// A string containing the default message associated with the status code.
     /// If the status code is unrecognized, a generic internal server error message is returned.
     /// </returns>
-    public static string GetDefaultMessageForStatusCode(int statusCode) => statusCode switch
+    public static string GetDefaultMessageForStatusCode(HttpStatusCode statusCode) => statusCode switch
     {
-        200 => "The operation completed successfully.",
-        201 => "The resource was created successfully.",
-        204 => "The request was successful, but there is no content to return.",
-        400 => "One or more validation errors occurred.",
-        401 => "Access is denied due to invalid credentials",
-        403 => "Access is forbidden, you do not have the necessary permissions to perform this operation.",
-        404 => "The requested resource could not be found.",
-        409 => "A conflict occurred, the request could not be completed due to conflicting changes.",
-        503 => "The service is currently unavailable.",
+        HttpStatusCode.OK => "The operation completed successfully.",
+        HttpStatusCode.Created => "The resource was created successfully.",
+        HttpStatusCode.NoContent => "The request was successful, but there is no content to return.",
+        HttpStatusCode.BadRequest => "One or more validation errors occurred.",
+        HttpStatusCode.Unauthorized => "Access is denied due to invalid credentials.",
+        HttpStatusCode.Forbidden => "Access is forbidden, you do not have the necessary permissions to perform this operation.",
+        HttpStatusCode.NotFound => "The requested resource could not be found.",
+        HttpStatusCode.Conflict => "A conflict occurred, the request could not be completed due to conflicting changes.",
+        HttpStatusCode.ServiceUnavailable => "The service is currently unavailable.",
         _ => "An internal server error occurred."
+    };
+    
+    public static HttpStatusCode GetDefaultStatusCode(HttpContext context) => context.Request.Method.ToUpper() switch
+    {
+        "POST" => HttpStatusCode.Created,
+        "DELETE" => HttpStatusCode.NoContent,
+        _ => (HttpStatusCode)context.Response.StatusCode
     };
 }

@@ -1,7 +1,7 @@
+using System.Net;
 using FluentValidation;
 using Initium.Infrastructure;
 using Initium.Response;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Initium.Filters;
@@ -36,7 +36,7 @@ internal class ImplicitValidationFilter : IActionFilter
         context.Result = ApiResponseBuilder
             .CreateFromContext(context.HttpContext)
             .WithMessage("One or more validation errors occurred.")
-            .WithStatusCode(StatusCodes.Status400BadRequest)
+            .WithStatusCode(HttpStatusCode.BadRequest)
             .WithErrors(validationResult.Errors)
             .BuildAsJsonResult();
     }
