@@ -101,7 +101,6 @@ public class ServiceResult : BaseResult
     
     public ServiceResult WithMetadata(string key, string value)
     {
-        // Metadata ??= new Dictionary<string, string>();
         Metadata[key] = value;
         return this;
     }

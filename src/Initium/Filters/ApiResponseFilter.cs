@@ -43,8 +43,6 @@ internal class ApiResponseFilter(ILogger<ApiResponseFilter> logger) : ActionFilt
             .CreateFromContext(context.HttpContext)
             .WithStatusCode(statusCode)
             .WithMessage(message)
-            // .WithData(serviceResult.Data)
-            .WithCustomHeaders(serviceResult.Metadata)
             .BuildAsJsonResult();
     }
 
