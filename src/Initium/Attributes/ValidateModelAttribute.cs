@@ -33,7 +33,9 @@ public class ValidateModelAttribute(Type validatorType) : Attribute, IActionFilt
 			.CreateFromContext(context.HttpContext)
 			.WithMessage("One or more validation errors occurred.")
 			.WithStatusCode(HttpStatusCode.BadRequest)
-			.WithErrors(validationResult.Errors)
+			.WithErrors(validationResult.Errors
+				.Select(validationFailure => new ApiError(validationFailure.ErrorCode, validationFailure.ErrorMessage))
+				.ToArray())
 			.BuildAsJsonResult();
 	}
 

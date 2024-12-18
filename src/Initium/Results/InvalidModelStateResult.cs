@@ -16,11 +16,18 @@ public class InvalidModelStateResult : JsonResult
 	/// <param name="actionContext">The context of the action where the model validation failed.</param>
 	public InvalidModelStateResult(ActionContext actionContext) : base(actionContext)
 	{
+		var validationErrors = actionContext.ModelState
+			.Where(ms => ms.Value != null && ms.Value.Errors.Any())
+			.SelectMany(ms => ms.Value?.Errors.Select(error => 
+				new ApiError(ms.Key, error.ErrorMessage)) ?? Array.Empty<ApiError>())
+			.ToArray();
+		
 		// Create a standardized API response using the HTTP context.
 		StatusCode = StatusCodes.Status400BadRequest;
 		Value = ApiResponseBuilder.CreateFromContext(actionContext.HttpContext)
 			.WithMessage("One or more validation errors occurred.")
 			.WithStatusCode(HttpStatusCode.BadRequest)
+			.WithErrors(validationErrors)
 			.Build();
 	}
 }

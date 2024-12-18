@@ -1,9 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
-using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Initium.Response;
 
@@ -79,18 +77,37 @@ internal class ApiResponseBuilder
     }
 
     /// <summary>
-    /// Adds a list of validation errors to the API response.
+    /// Adds a custom header to the API response.
     /// </summary>
-    /// <param name="validationResultErrors">The list of validation failures to include in the response.</param>
-    /// <returns>The current instance of the <see cref="ApiResponseBuilder"/>.</returns>
-    public ApiResponseBuilder WithErrors(List<ValidationFailure> validationResultErrors)
+    /// <param name="headerName">The name of the header to be added.</param>
+    /// <param name="headerValue">The value for the specified header.</param>
+    /// <returns>The current instance of <see cref="ApiResponseBuilder"/> with the custom header added.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="headerName"/> is null, empty, or consists only of white-space characters.</exception>
+    public ApiResponseBuilder WithCustomHeader(string headerName, string headerValue)
     {
-        _apiResponse.Errors = validationResultErrors
-            .Select(validationFailure => new ApiError(validationFailure.ErrorCode, validationFailure.ErrorMessage))
-            .ToList();
+        if (string.IsNullOrWhiteSpace(headerName))
+            throw new ArgumentException("Header name cannot be null or empty.", nameof(headerName));
+
+        _apiResponse.CustomHeaders ??= new Dictionary<string, string>();
+        _apiResponse.CustomHeaders[headerName] = headerValue;
         return this;
     }
 
+    /// <summary>
+    /// Adds custom headers to the API response.
+    /// </summary>
+    /// <param name="headers">A dictionary containing header names as keys and their respective values.</param>
+    /// <returns>The current instance of <see cref="ApiResponseBuilder"/> with the added custom headers.</returns>
+    /// <exception cref="ArgumentException">Thrown when the <paramref name="headers"/> dictionary is null or empty.</exception>
+    public ApiResponseBuilder WithCustomHeaders(Dictionary<string, string> headers)
+    {
+        _apiResponse.CustomHeaders ??= new Dictionary<string, string>();
+        foreach (var header in headers) 
+            _apiResponse.CustomHeaders[header.Key] = header.Value;
+
+        return this;
+    }
+    
     /// <summary>
     /// Builds and returns the constructed <see cref="ApiResponse"/>.
     /// </summary>
@@ -105,14 +122,4 @@ internal class ApiResponseBuilder
     {
         StatusCode = _apiResponse.StatusCode
     };
-
-    public ApiResponseBuilder WithCustomHeader(string headerName, string headerValue)
-    {
-        if (string.IsNullOrWhiteSpace(headerName))
-            throw new ArgumentException("Header name cannot be null or empty.", nameof(headerName));
-
-        _apiResponse.CustomHeaders ??= new Dictionary<string, string>();
-        _apiResponse.CustomHeaders[headerName] = headerValue;
-        return this;
-    }
 }
