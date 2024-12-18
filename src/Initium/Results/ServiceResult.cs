@@ -117,6 +117,8 @@ public class ServiceResult : BaseResult
     /// <param name="result">The <see cref="ServiceResult"/> to convert.</param>
     public static implicit operator bool(ServiceResult result) => result.Success;
     
+    public static implicit operator HttpStatusCode?(ServiceResult result) => result.StatusCode;
+    
     /// <summary>
     /// Converts a boolean value to a <see cref="ServiceResult"/>.
     /// </summary>
