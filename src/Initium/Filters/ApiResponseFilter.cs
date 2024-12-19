@@ -37,13 +37,19 @@ internal class ApiResponseFilter(ILogger<ApiResponseFilter> logger) : ActionFilt
 	        serviceResult.Message 
 	        ?? GetApiResponseMessage(context, statusCode)
 	        ?? ApiResponseHelper.GetDefaultMessageForStatusCode(statusCode);
-        
-        // Create an ApiResponse object, including HTTP context details.
-        context.Result = ApiResponseBuilder
-            .CreateFromContext(context.HttpContext)
-            .WithStatusCode(statusCode)
-            .WithMessage(message)
-            .BuildAsJsonResult();
+
+        // Determine the appropriate response based on the status code:
+		// - For 204 (No Content) and 304 (Not Modified), set a StatusCodeResult without a response body.
+		// - For other status codes, create a standardized ApiResponse object including HTTP context details.
+        context.Result = statusCode switch
+        {
+	        HttpStatusCode.NoContent or HttpStatusCode.NotModified => new StatusCodeResult((int)statusCode),
+	        _ => ApiResponseBuilder
+		        .CreateFromContext(context.HttpContext)
+		        .WithStatusCode(statusCode)
+		        .WithMessage(message)
+		        .BuildAsJsonResult()
+        };
     }
 
     private static string? GetApiResponseMessage(ActionExecutedContext context, HttpStatusCode statusCode) => 
