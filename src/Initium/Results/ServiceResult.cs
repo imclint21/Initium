@@ -129,7 +129,6 @@ public class ServiceResult : BaseResult
     /// A <see cref="ServiceResult"/> instance representing the success or error state.
     /// </returns>
     public static implicit operator ServiceResult(bool isSuccess) => isSuccess ? Ok() : Error();
-
 }
 
 /// <summary>
@@ -205,8 +204,12 @@ public class ServiceResult<TData> : ServiceResult
     /// Implicitly converts data of type <typeparamref name="TData"/> into a <see cref="ServiceResult{TData}"/> representing a successful result.
     /// </summary>
     /// <param name="data">The data to wrap in a <see cref="ServiceResult{TData}"/>.</param>
-    public static implicit operator ServiceResult<TData>(TData? data) => new() { Data = data };
-
+    public static implicit operator ServiceResult<TData>(TData? data) => new()
+    {
+        Success = true,
+        Data = data
+    };
+    
     /// <summary>
     /// Unwraps the data contained in the result, throwing an exception if the result is unsuccessful or the data is null.
     /// </summary>
