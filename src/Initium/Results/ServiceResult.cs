@@ -209,11 +209,20 @@ public class ServiceResult<TData> : ServiceResult
         Success = true,
         Data = data
     };
-    
+
     /// <summary>
-    /// Unwraps the data contained in the result, throwing an exception if the result is unsuccessful or the data is null.
+    /// Tries to unwrap the data contained in the result, returning null if the data is null.
+    /// </summary> 
+    /// <returns>The unwrapped data or null.</returns>
+    public TData? Unwrap() => Data;
+
+    /// <summary>
+    /// Unwraps the data contained in the result, throwing an exception if the data is null.
+    /// Allows overriding the HTTP status code and message.
     /// </summary>
+    /// <param name="statusCode">The HTTP status code for the exception. Defaults to InternalServerError.</param>
+    /// <param name="message">The custom message for the exception. Defaults to a generic message.</param>
     /// <returns>The unwrapped data.</returns>
-    /// <exception cref="ApiException">Thrown if the result is unsuccessful or the data is null.</exception>
-    public TData Unwrap() => Data ?? throw new ApiException(HttpStatusCode.InternalServerError, "Unwrapping failed, data is null.");
+    /// <exception cref="ApiException">Thrown if the data is null.</exception>
+    public TData UnwrapOrThrow(HttpStatusCode statusCode = HttpStatusCode.InternalServerError, string? message = null) => Data ?? throw new ApiException(statusCode, message ?? "Unwrapping failed, data is null.");
 }
