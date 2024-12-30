@@ -5,7 +5,7 @@ using Initium.Infrastructure;
 namespace Initium;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 [TypeFilter(typeof(ApiExceptionFilter))]
 [TypeFilter(typeof(ApiResponseFilter))]
 [TypeFilter(typeof(ImplicitValidationFilter))]
