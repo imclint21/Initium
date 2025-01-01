@@ -60,7 +60,11 @@ internal static class ApiResponseHelper
     public static HttpStatusCode GetDefaultStatusCode(HttpContext context) => context.Request.Method.ToUpper() switch
     {
         "POST" => HttpStatusCode.Created,
-        "DELETE" => HttpStatusCode.NoContent,
-        _ => (HttpStatusCode)context.Response.StatusCode
+        "DELETE" or "PATCH" or "PUT" => HttpStatusCode.NoContent, 
+        "GET" or "HEAD" => HttpStatusCode.OK,
+        _ => context.Response.StatusCode > 0 ? (HttpStatusCode)context.Response.StatusCode : HttpStatusCode.InternalServerError
     };
+
+    public static string? GetApiResponseMessage(ActionDescriptor actionDescriptor, HttpStatusCode statusCode) =>
+        GetApiResponseAttributes(actionDescriptor).FirstOrDefault(attribute => attribute.StatusCode == statusCode)?.Message;
 }

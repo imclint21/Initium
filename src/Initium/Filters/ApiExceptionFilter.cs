@@ -1,6 +1,7 @@
 using System.Net;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Initium.Exceptions;
+using Initium.Helpers;
 using Initium.Response;
 
 namespace Initium.Filters;
@@ -20,39 +21,29 @@ internal class ApiExceptionFilter : IExceptionFilter
 	{
 		// Start building the ApiResponse using the Fluent Builder
 		var apiResponseBuilder = ApiResponseBuilder.CreateFromContext(context.HttpContext);
-
-		// Use pattern switch to handle exceptions
-		context.Result = context.Exception switch
+		
+		// Determine the HTTP status code:
+		var statusCode = context.Exception switch
 		{
-			ApiException ex => apiResponseBuilder
-				.WithMessage(ex.Message)
-				.WithStatusCode(ex.StatusCode)
-				.BuildAsJsonResult(),
-
-			NotImplementedException ex => apiResponseBuilder
-				.WithMessage(ex.Message)
-				.WithStatusCode(HttpStatusCode.NotImplemented)
-				.BuildAsJsonResult(),
-
-			_ => apiResponseBuilder
-				.WithMessage("An unexpected error occurred.")
-				.WithStatusCode(HttpStatusCode.InternalServerError)
-				.BuildAsJsonResult()
+			ApiException exception => exception.StatusCode,
+			NotImplementedException => HttpStatusCode.NotImplemented,
+			_ => HttpStatusCode.InternalServerError 
 		};
 
+		// Determine the response message:
+		// 1. Use the exception's message if it's not null or whitespace.
+		// 2. Otherwise, get the message from [ApiResponse] attributes.
+		// 3. If none is found, use the default message for the StatusCode.
+		var message = 
+			(string.IsNullOrWhiteSpace(context.Exception.Message) ? null : context.Exception.Message)
+			?? ApiResponseHelper.GetApiResponseMessage(context.ActionDescriptor, statusCode) 
+			?? ApiResponseHelper.GetDefaultMessageForStatusCode(statusCode);
+
+		// Construct a standardized ApiResponse object including HTTP context details.
 		context.ExceptionHandled = true;
+		context.Result = apiResponseBuilder
+			.WithStatusCode(statusCode)
+			.WithMessage(message)
+			.BuildAsJsonResult();
 	}
 }
-//
-// public static implicit operator ActionResult(ServiceResult result)
-// {
-// 	if (result.Success && result.StatusCode == HttpStatusCode.NoContent)
-// 	{
-// 		return new NoContentResult();
-// 	}
-//
-// 	return new ObjectResult(result)
-// 	{
-// 		StatusCode = (int)result.StatusCode
-// 	};
-// }

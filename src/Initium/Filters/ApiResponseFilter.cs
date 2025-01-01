@@ -22,6 +22,9 @@ internal class ApiResponseFilter(ILogger<ApiResponseFilter> logger) : ActionFilt
         // Check if the result of the action is an ObjectResult containing a ServiceResult.
         if (context.Result is not ObjectResult { Value: ServiceResult serviceResult }) return;
  
+        // Start building the ApiResponse using the Fluent Builder
+        var apiResponseBuilder = ApiResponseBuilder.CreateFromContext(context.HttpContext);
+        
         // Determine the HTTP status code:
 		// 1. Use ServiceResult status code if set.
 		// 2. Otherwise, use the default based on the HTTP method.
@@ -32,26 +35,22 @@ internal class ApiResponseFilter(ILogger<ApiResponseFilter> logger) : ActionFilt
 		// Determine the response message:
 		// 1. Use ServiceResult message if set.
 		// 2. Otherwise, get the message from [ApiResponse] attributes.
-		// 3. If none found, use the default message for the StatusCode.
+		// 3. If none is found, use the default message for the StatusCode.
         var message = 
-	        serviceResult.Message 
-	        ?? GetApiResponseMessage(context, statusCode)
+	        serviceResult.Message
+	        ?? ApiResponseHelper.GetApiResponseMessage(context.ActionDescriptor, statusCode)
 	        ?? ApiResponseHelper.GetDefaultMessageForStatusCode(statusCode);
 
         // Determine the appropriate response based on the status code:
 		// - For 204 (No Content) and 304 (Not Modified), set a StatusCodeResult without a response body.
-		// - For other status codes, create a standardized ApiResponse object including HTTP context details.
+		// - For other status codes, construct a standardized ApiResponse object including HTTP context details.
         context.Result = statusCode switch
         {
 	        HttpStatusCode.NoContent or HttpStatusCode.NotModified => new StatusCodeResult((int)statusCode),
-	        _ => ApiResponseBuilder
-		        .CreateFromContext(context.HttpContext)
+	        _ => apiResponseBuilder
 		        .WithStatusCode(statusCode)
 		        .WithMessage(message)
 		        .BuildAsJsonResult()
         };
     }
-
-    private static string? GetApiResponseMessage(ActionExecutedContext context, HttpStatusCode statusCode) => 
-        ApiResponseHelper.GetApiResponseAttributes(context.ActionDescriptor).FirstOrDefault(attribute => attribute.StatusCode == statusCode)?.Message;
 }
