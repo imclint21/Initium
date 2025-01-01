@@ -65,11 +65,11 @@ internal class ApiResponseBuilder
         return this;
     }
 
-    public ApiResponseBuilder WithData(object data)
-    {
-        ApiResponse.Data = data;
-        return this;
-    }
+    // public ApiResponseBuilder WithData(object data)
+    // {
+    //     ApiResponse.Data = data;
+    //     return this;
+    // }
 
     /// <summary>
     /// Adds error messages to the API response.
