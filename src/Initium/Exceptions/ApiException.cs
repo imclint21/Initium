@@ -9,6 +9,7 @@ namespace Initium.Exceptions;
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 public class ApiException : Exception
 {
+	public string? CustomMessage { get; set; }
 	public HttpStatusCode StatusCode { get; }
 	
 	/// <summary>
@@ -18,8 +19,9 @@ public class ApiException : Exception
 	/// <param name="message">The message describing the error. Defaults to a generic error message.</param>
 	/// <param name="innerException">The inner exception that caused the current exception. Optional.</param>
 	public ApiException(HttpStatusCode statusCode = HttpStatusCode.InternalServerError, string? message = null, Exception? innerException = null)
-		: base(message ?? "An error occurred during API processing.", innerException)
+		: base(message, innerException)
 	{
+		CustomMessage = message;
 		StatusCode = statusCode;
 	}
 }

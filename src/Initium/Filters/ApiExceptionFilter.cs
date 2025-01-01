@@ -35,8 +35,8 @@ internal class ApiExceptionFilter : IExceptionFilter
 		// 2. Otherwise, get the message from [ApiResponse] attributes.
 		// 3. If none is found, use the default message for the StatusCode.
 		var message = 
-			(string.IsNullOrWhiteSpace(context.Exception.Message) ? null : context.Exception.Message)
-			?? ApiResponseHelper.GetApiResponseMessage(context.ActionDescriptor, statusCode) 
+			(context.Exception is ApiException apiException ? apiException.CustomMessage : context.Exception.Message)
+			?? ApiResponseHelper.GetApiResponseMessage(context.ActionDescriptor, statusCode)
 			?? ApiResponseHelper.GetDefaultMessageForStatusCode(statusCode);
 
 		// Construct a standardized ApiResponse object including HTTP context details.
