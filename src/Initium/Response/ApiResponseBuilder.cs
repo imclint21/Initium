@@ -6,17 +6,17 @@ using Microsoft.AspNetCore.Mvc;
 namespace Initium.Response;
 
 /// <summary>
-/// Provides a fluent builder for creating <see cref="ApiResponse"/> objects.
+/// Provides a fluent builder for creating <see cref="Response.ApiResponse"/> objects.
 /// </summary>
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 internal class ApiResponseBuilder
 {
-    private readonly ApiResponse _apiResponse;
+    public ApiResponse ApiResponse { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ApiResponseBuilder"/> class.
     /// </summary>
-    private ApiResponseBuilder() => _apiResponse = new ApiResponse();
+    private ApiResponseBuilder() => ApiResponse = new ApiResponse();
 
     /// <summary>
     /// Creates a new instance of the <see cref="ApiResponseBuilder"/>.
@@ -31,7 +31,7 @@ internal class ApiResponseBuilder
     /// <returns>A new instance of the <see cref="ApiResponseBuilder"/> initialized with context details.</returns>
     public static ApiResponseBuilder CreateFromContext(HttpContext context) => new()
     {
-        _apiResponse =
+        ApiResponse =
         {
             RequestDetails = new RequestDetails
             {
@@ -50,7 +50,7 @@ internal class ApiResponseBuilder
     /// <returns>The current instance of the <see cref="ApiResponseBuilder"/>.</returns>
     public ApiResponseBuilder WithMessage(string message)
     {
-        _apiResponse.Message = message;
+        ApiResponse.Message = message;
         return this;
     }
 
@@ -61,7 +61,13 @@ internal class ApiResponseBuilder
     /// <returns>The current instance of the <see cref="ApiResponseBuilder"/>.</returns>
     public ApiResponseBuilder WithStatusCode(HttpStatusCode statusCode)
     {
-        _apiResponse.StatusCode = (int)statusCode;
+        ApiResponse.StatusCode = (int)statusCode;
+        return this;
+    }
+
+    public ApiResponseBuilder WithData(object data)
+    {
+        ApiResponse.Data = data;
         return this;
     }
 
@@ -72,7 +78,7 @@ internal class ApiResponseBuilder
     /// <returns>The current instance of the <see cref="ApiResponseBuilder"/>.</returns>
     public ApiResponseBuilder WithErrors(params ApiError[] errors)
     {
-        _apiResponse.Errors = errors.ToList();
+        ApiResponse.Errors = errors.ToList();
         return this;
     }
 
@@ -88,8 +94,8 @@ internal class ApiResponseBuilder
         if (string.IsNullOrWhiteSpace(headerName))
             throw new ArgumentException("Header name cannot be null or empty.", nameof(headerName));
 
-        _apiResponse.CustomHeaders ??= new Dictionary<string, string>();
-        _apiResponse.CustomHeaders[headerName] = headerValue;
+        ApiResponse.CustomHeaders ??= new Dictionary<string, string>();
+        ApiResponse.CustomHeaders[headerName] = headerValue;
         return this;
     }
 
@@ -101,25 +107,25 @@ internal class ApiResponseBuilder
     /// <exception cref="ArgumentException">Thrown when the <paramref name="headers"/> dictionary is null or empty.</exception>
     public ApiResponseBuilder WithCustomHeaders(Dictionary<string, string> headers)
     {
-        _apiResponse.CustomHeaders ??= new Dictionary<string, string>();
+        ApiResponse.CustomHeaders ??= new Dictionary<string, string>();
         foreach (var header in headers) 
-            _apiResponse.CustomHeaders[header.Key] = header.Value;
+            ApiResponse.CustomHeaders[header.Key] = header.Value;
 
         return this;
     }
     
     /// <summary>
-    /// Builds and returns the constructed <see cref="ApiResponse"/>.
+    /// Builds and returns the constructed <see cref="Response.ApiResponse"/>.
     /// </summary>
-    /// <returns>The constructed <see cref="ApiResponse"/>.</returns>
-    public ApiResponse Build() => _apiResponse;
+    /// <returns>The constructed <see cref="Response.ApiResponse"/>.</returns>
+    public ApiResponse Build() => ApiResponse;
 
     /// <summary>
-    /// Builds and returns the constructed <see cref="ApiResponse"/> as a <see cref="JsonResult"/>.
+    /// Builds and returns the constructed <see cref="Response.ApiResponse"/> as a <see cref="JsonResult"/>.
     /// </summary>
-    /// <returns>A <see cref="JsonResult"/> containing the constructed <see cref="ApiResponse"/>.</returns>
-    public JsonResult BuildAsJsonResult() => new(_apiResponse)
+    /// <returns>A <see cref="JsonResult"/> containing the constructed <see cref="Response.ApiResponse"/>.</returns>
+    public JsonResult BuildAsJsonResult() => new(ApiResponse)
     {
-        StatusCode = _apiResponse.StatusCode
+        StatusCode = ApiResponse.StatusCode
     };
 }
