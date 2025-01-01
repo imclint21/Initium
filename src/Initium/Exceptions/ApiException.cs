@@ -9,47 +9,16 @@ namespace Initium.Exceptions;
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 public class ApiException : Exception
 {
-	/// <summary>
-	/// Gets the HTTP status code associated with this exception.
-	/// </summary>
 	public HttpStatusCode StatusCode { get; }
-
-	/// <summary>
-	/// Initializes a new instance of the <see cref="ApiException"/> class with a specified HTTP status code.
-	/// </summary>
-	/// <param name="statusCode">The HTTP status code associated with this exception.</param>
-	public ApiException(HttpStatusCode statusCode = HttpStatusCode.InternalServerError)
-	{
-		StatusCode = statusCode;
-	}
 	
 	/// <summary>
-	/// Initializes a new instance of the <see cref="ApiException"/> class with a specified HTTP status code and message.
+	/// Initializes a new instance of the <see cref="ApiException"/> class with a specified HTTP status code, message, and optional inner exception.
 	/// </summary>
-	/// <param name="statusCode">The HTTP status code associated with this exception.</param>
-	/// <param name="message">The message describing the error.</param>
-	public ApiException(HttpStatusCode statusCode, string message) : base(message)
-	{
-		StatusCode = statusCode;
-	}
-	
-	/// <summary>
-	/// Initializes a new instance of the <see cref="ApiException"/> class with a specified message.
-	/// </summary>
-	/// <param name="message">The message describing the error.</param>
-	public ApiException(string message) : base(message)
-	{
-		// TODO: Define proper error code.
-		// StatusCode = statusCode;
-	}
-
-	/// <summary>
-	/// Initializes a new instance of the <see cref="ApiException"/> class with a specified HTTP status code, message, and inner exception.
-	/// </summary>
-	/// <param name="statusCode">The HTTP status code associated with this exception.</param>
-	/// <param name="message">The message describing the error.</param>
-	/// <param name="innerException">The inner exception that caused the current exception.</param>
-	public ApiException(HttpStatusCode statusCode, string message, Exception? innerException) : base(message, innerException)
+	/// <param name="statusCode">The HTTP status code associated with this exception. Defaults to <see cref="HttpStatusCode.InternalServerError"/>.</param>
+	/// <param name="message">The message describing the error. Defaults to a generic error message.</param>
+	/// <param name="innerException">The inner exception that caused the current exception. Optional.</param>
+	public ApiException(HttpStatusCode statusCode = HttpStatusCode.InternalServerError, string? message = null, Exception? innerException = null)
+		: base(message ?? "An error occurred during API processing.", innerException)
 	{
 		StatusCode = statusCode;
 	}
