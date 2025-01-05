@@ -41,7 +41,7 @@ jobs:
         SLACK_WEBHOOKS_URL: ${{ secrets.SLACK_WEBHOOKS_URL }}
       run: |
         curl -X POST -H 'Content-type: application/json' --data '{
-          "text": "📦 NuGet package version *${{ env.new_build }}* has been published to NuGet Packages."
+          "text": "📦 *Initium* package *v${{ env.new_build }}* has been published to NuGet Packages."
         }' $SLACK_WEBHOOKS_URL
 
     - name: Push to GitHub NuGet
