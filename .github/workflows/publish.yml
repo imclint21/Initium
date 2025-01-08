@@ -35,6 +35,15 @@ jobs:
         NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
       run: dotnet nuget push "./nupkg/*.nupkg" --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json --skip-duplicate
 
+    - name: Notify Slack
+      if: success()
+      env:
+        SLACK_WEBHOOKS_URL: ${{ secrets.SLACK_WEBHOOKS_URL }}
+      run: |
+        curl -X POST -H 'Content-type: application/json' --data '{
+          "text": "📦 *Initium* package *v${{ env.new_build }}* has been published to NuGet Packages."
+        }' $SLACK_WEBHOOKS_URL
+
     - name: Push to GitHub NuGet
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
