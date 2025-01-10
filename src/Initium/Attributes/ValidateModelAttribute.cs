@@ -16,7 +16,7 @@ public class ValidateModelAttribute(Type validatorType) : Attribute, IActionFilt
 	/// <summary>
 	/// Called before the action method executes. Validates the model using the specified validator.
 	/// </summary>
-	/// <param name="context">The context for the action execution.</param>
+	/// <param name="context">The context for the action filter.</param>
 	public void OnActionExecuting(ActionExecutingContext context)
 	{
 		var argument = context.ActionArguments.Values.FirstOrDefault();

@@ -35,7 +35,7 @@ public class QueryFilterAttribute<T>(string propertyName, Type propertyType) : A
 		if (!query.TryGetValue(propertyName, out var parameterValue)) return;
 		
 		if (StringValues.IsNullOrEmpty(parameterValue))
-			throw new ApiException(HttpStatusCode.BadRequest, "FUCK HITLER"); 
+			throw new ApiException(HttpStatusCode.BadRequest, "Query parameter is required but was not provided.");
 
 		if (!Enum.TryParse(propertyType, parameterValue, ignoreCase: true, out var enumValue))
 			throw new ApiException(HttpStatusCode.BadRequest, $"Invalid query parameter value: `{parameterValue}` for `{propertyName}`. Allowed values are: {string.Join(", ", Enum.GetNames(propertyType))}.");
