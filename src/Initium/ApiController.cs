@@ -8,6 +8,7 @@ namespace Initium;
 [Route("[controller]")]
 [TypeFilter(typeof(ApiExceptionFilter))]
 [TypeFilter(typeof(ApiResponseFilter))]
+[TypeFilter(typeof(LoggingFilter))]
 [TypeFilter(typeof(ImplicitValidationFilter))]
 public class ApiController : BaseController;
 
