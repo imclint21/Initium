@@ -1,15 +1,17 @@
+using System.Diagnostics;
 using System.Net;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Initium.Exceptions;
 using Initium.Helpers;
 using Initium.Response;
+using Microsoft.Extensions.Logging;
 
 namespace Initium.Filters;
 
 /// <summary>
 /// A filter that handles exceptions and transforms them into a standardized <see cref="ApiResponse"/>.
 /// </summary>
-internal class ApiExceptionFilter : IExceptionFilter
+internal class ApiExceptionFilter(ILogger<ApiExceptionFilter> logger) : IExceptionFilter
 {
 	/// <summary>
 	/// Handles exceptions that occur during the execution of an action.
@@ -19,6 +21,9 @@ internal class ApiExceptionFilter : IExceptionFilter
 	/// <param name="context">The context for the exception.</param>
 	public void OnException(ExceptionContext context)
 	{
+		// Create a stopwatch for logs.
+		var stopwatch = Stopwatch.StartNew();
+		
 		// Start building the ApiResponse using the Fluent Builder
 		var apiResponseBuilder = ApiResponseBuilder.CreateFromContext(context.HttpContext);
 		
@@ -45,5 +50,8 @@ internal class ApiExceptionFilter : IExceptionFilter
 			.WithStatusCode(statusCode)
 			.WithMessage(message)
 			.BuildAsJsonResult();
+		
+		// Logs the details of the current HTTP request.
+		LoggingHelper.LogRequest(logger, context.HttpContext, statusCode, stopwatch.ElapsedMilliseconds);
 	}
 }
