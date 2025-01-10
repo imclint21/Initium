@@ -13,4 +13,14 @@ public static class EnumerableExtensions
 	/// <returns>A single string that consists of the elements in the sequence, delimited by the separator.</returns>
 	public static string Join(this IEnumerable<string> value, string separator = " ") =>
 		string.Join(separator, value);
+	
+	
+	/// <summary>
+	/// Checks if an <see cref="IEnumerable{T}"/> is empty.
+	/// </summary>
+	/// <typeparam name="T">The type of elements in the enumerable.</typeparam>
+	/// <param name="source">The enumerable to check.</param>
+	/// <returns><c>true</c> if the enumerable is empty or null; otherwise, <c>false</c>.</returns>
+	public static bool IsEmpty<T>(this IEnumerable<T>? source) => 
+		source == null || !source.Any();
 }
