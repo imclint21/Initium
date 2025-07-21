@@ -19,7 +19,7 @@ public class InvalidModelStateResult : JsonResult
 		var validationErrors = actionContext.ModelState
 			.Where(ms => ms.Value != null && ms.Value.Errors.Any())
 			.SelectMany(ms => ms.Value?.Errors.Select(error => 
-				new ApiError(ms.Key, error.ErrorMessage)) ?? Array.Empty<ApiError>())
+				new ApiError(ms.Key, error.ErrorMessage)) ?? [])
 			.ToArray();
 		
 		// Create a standardized API response using the HTTP context.

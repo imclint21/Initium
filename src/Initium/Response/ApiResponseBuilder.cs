@@ -9,6 +9,7 @@ namespace Initium.Response;
 /// Provides a fluent builder for creating <see cref="Response.ApiResponse"/> objects.
 /// </summary>
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 internal class ApiResponseBuilder
 {
     public ApiResponse ApiResponse { get; set; }
