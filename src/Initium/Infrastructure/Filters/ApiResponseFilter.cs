@@ -1,11 +1,11 @@
 using System.Net;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
-using Initium.Helpers;
+using Initium.Infrastructure.Helpers;
 using Initium.Response;
 using Initium.Results;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Initium.Filters;
+namespace Initium.Infrastructure.Filters;
 
 /// <summary>
 /// Filter responsible for transforming <see cref="ServiceResult"/> objects into a standardized <see cref="ApiResponse"/>.

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Initium.Filters;
+namespace Initium.Infrastructure.Filters;
 
 public class LoggingFilter : IResultFilter
 {

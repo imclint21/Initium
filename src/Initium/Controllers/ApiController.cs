@@ -1,7 +1,7 @@
 using System.Net;
 using Initium.Exceptions;
-using Initium.Filters;
 using Initium.Infrastructure;
+using Initium.Infrastructure.Filters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Initium.Controllers;

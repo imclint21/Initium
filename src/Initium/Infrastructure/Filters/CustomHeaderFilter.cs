@@ -1,7 +1,7 @@
 using Initium.Attributes;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Initium.Filters;
+namespace Initium.Infrastructure.Filters;
 
 internal class CustomHeaderFilter : IActionFilter
 {

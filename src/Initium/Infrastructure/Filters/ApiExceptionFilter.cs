@@ -1,13 +1,12 @@
 using System.Diagnostics;
 using System.Net;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Initium.Exceptions;
-using Initium.Helpers;
 using Initium.Infrastructure.Helpers;
 using Initium.Response;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 
-namespace Initium.Filters;
+namespace Initium.Infrastructure.Filters;
 
 /// <summary>
 /// A filter that handles exceptions and transforms them into a standardized <see cref="ApiResponse"/>.
