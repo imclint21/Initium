@@ -7,14 +7,14 @@ using Microsoft.AspNetCore.Mvc.Filters;
 namespace Initium.Attributes;
 
 /// <summary>
-/// An attribute that performs model validation using a specified FluentValidation validator.
+/// An attribute that performs request validation using a specified FluentValidation validator.
 /// </summary>
 [AttributeUsage(AttributeTargets.Method)]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
-public class ValidateModelAttribute(Type validatorType) : Attribute, IActionFilter
+public class ValidateRequestAttribute(Type validatorType) : Attribute, IActionFilter
 {
 	/// <summary>
-	/// Called before the action method executes. Validates the model using the specified validator.
+	/// Called before the action method executes. Validates the request using the specified validator.
 	/// </summary>
 	/// <param name="context">The context for the action filter.</param>
 	public void OnActionExecuting(ActionExecutingContext context)

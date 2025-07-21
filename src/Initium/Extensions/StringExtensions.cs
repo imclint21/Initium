@@ -24,5 +24,5 @@ public static class StringExtensions
 	/// </summary>
 	/// <param name="value">The string to check.</param>
 	/// <returns><c>true</c> if the string is empty after trimming; otherwise, <c>false</c>.</returns>
-	public static bool IsEmpty(this string value) => value.Trim().Equals(string.Empty);
+	public static bool IsEmpty(this string value) => string.IsNullOrWhiteSpace(value.Trim());
 }

@@ -3,12 +3,12 @@ using Initium.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Initium.Results;
+namespace Initium.Infrastructure.Results;
 
 /// <summary>
 /// Represents a custom result for invalid model state, returned as a JSON response with standardized API response structure.
 /// </summary>
-public class InvalidModelStateResult : JsonResult
+internal class InvalidModelStateResult : JsonResult
 {
 	/// <summary>
 	/// Initializes a new instance of the <see cref="InvalidModelStateResult"/> class with the provided action context.

@@ -1,6 +1,6 @@
 using System.Net;
 using FluentValidation;
-using Initium.Infrastructure;
+using Initium.Request;
 using Initium.Response;
 using Microsoft.AspNetCore.Mvc.Filters;
 

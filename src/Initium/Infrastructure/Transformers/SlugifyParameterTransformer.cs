@@ -3,8 +3,11 @@ using Microsoft.AspNetCore.Routing;
 
 namespace Initium.Infrastructure.Transformers;
 
-internal class SlugifyParameterTransformer : IOutboundParameterTransformer
+internal partial class SlugifyParameterTransformer : IOutboundParameterTransformer
 {
+	[GeneratedRegex("([a-z])([A-Z])")]
+	private static partial Regex SlugRegex();
+	
 	public string TransformOutbound(object? value) =>
-		Regex.Replace(value?.ToString() ?? string.Empty, "([a-z])([A-Z])", "$1-$2").ToLower();
+        SlugRegex().Replace(value?.ToString() ?? string.Empty, "$1-$2").ToLower();
 }

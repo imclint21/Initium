@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace Initium.Infrastructure;
+namespace Initium.Results;
 
 /// <summary>
 /// Represents a base result model, providing common properties to indicate the outcome of an operation.
@@ -29,5 +29,5 @@ public abstract class BaseResult
 	/// <summary>
 	/// Gets or sets metadata associated with the result, which can be mapped to HTTP headers.
 	/// </summary>
-	public Dictionary<string, string>? Metadata { get; set; }
+	public Dictionary<string, string> Metadata { get; set; } = new();
 }

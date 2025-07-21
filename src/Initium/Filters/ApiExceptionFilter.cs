@@ -3,6 +3,7 @@ using System.Net;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Initium.Exceptions;
 using Initium.Helpers;
+using Initium.Infrastructure.Helpers;
 using Initium.Response;
 using Microsoft.Extensions.Logging;
 

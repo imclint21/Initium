@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using System.Net;
-using Initium.Helpers;
+using Initium.Infrastructure.Helpers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

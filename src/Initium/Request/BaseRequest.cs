@@ -1,6 +1,6 @@
 using Tapper;
 
-namespace Initium.Infrastructure;
+namespace Initium.Request;
 
 [TranspilationSource]
 public class BaseRequest

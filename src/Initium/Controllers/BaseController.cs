@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace Initium.Infrastructure;
+namespace Initium.Controllers;
 
 public class BaseController : ControllerBase
 {

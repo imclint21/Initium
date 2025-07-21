@@ -23,7 +23,7 @@ To get started with Initium, just add the package using NuGet:
 dotnet add package Initium
 ```
 
-## How it Works?
+## How does it Work?
 
 Here's how to create a controller :
 
