@@ -15,7 +15,7 @@ namespace Initium.Controllers;
 [TypeFilter(typeof(ApiResponseFilter))]
 [TypeFilter(typeof(LoggingFilter))]
 [TypeFilter(typeof(ImplicitValidationFilter))]
-[TypeFilter(typeof(CustomHeaderFilter))]
+// [TypeFilter(typeof(CustomHeaderFilter))]
 public abstract class ApiController : BaseController;
 
 /// <summary>
