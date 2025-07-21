@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 
-namespace Initium.Infrastructure;
+namespace Initium.Services;
 
 [SuppressMessage("ReSharper", "CollectionNeverQueried.Global")]
 public abstract class BaseService
@@ -32,3 +32,6 @@ public abstract class BaseService
 		return (TService)this;
 	}
 }
+
+// public class BaseService<TEntity> : BaseService where TEntity : BaseEntity;
+// public class BaseService<TEntity, TKey> : BaseService where TEntity : BaseEntity<TKey>;

@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Initium.Services;
 using Microsoft.AspNetCore.Http;
 
 namespace Initium.Infrastructure.Extensions;

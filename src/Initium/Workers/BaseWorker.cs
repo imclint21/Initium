@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Hosting;
 
-namespace Initium.Infrastructure;
+namespace Initium.Workers;
 
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 [SuppressMessage("ReSharper", "UnusedParameter.Global")]
