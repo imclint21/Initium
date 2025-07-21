@@ -6,7 +6,7 @@
 		<Nullable>enable</Nullable>
 		<AssemblyName>Initium</AssemblyName>
 		<RootNamespace>Initium</RootNamespace>
-		<Version>0.2.1</Version>
+		<Version>0.2.2</Version>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageId>Initium</PackageId>
 		<Title>Initium</Title>
@@ -38,5 +38,11 @@
 		<None Include="../../README.md" Pack="true" PackagePath="/"/>
 		<None Include="../../LICENSE.md" Pack="true" PackagePath="/"/>
 		<None Include="logo.png" Pack="true" PackagePath="/" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="..\..\TODO.txt">
+	    <Link>TODO.txt</Link>
+	  </Content>
 	</ItemGroup>
 </Project>
