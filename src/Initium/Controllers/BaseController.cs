@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Initium.Controllers;
@@ -10,9 +11,30 @@ namespace Initium.Controllers;
 /// </summary>
 public abstract class BaseController : ControllerBase
 {
-	// protected string? GetClaim(string claimType) => HttpContext.User.Claims.FirstOrDefault(c => c.Type == claimType)?.Value;
-	// protected string UserId => HttpContext.User.Claims.First(claim => claim.Type == "sub").Value;
-	// protected Guid UserId => Guid.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value, out var authorizationClaimUid) ? authorizationClaimUid : default;
+	/// <summary>
+	/// Gets the GUID of the currently authenticated user, if available.
+	/// Extracted from the "sub" or "NameIdentifier" claims.
+	/// </summary>
+	protected Guid? UserId => Guid.TryParse(User.FindFirst("sub")?.Value ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var guid) ? guid : null;
+
+	/// <summary>
+	/// Gets the IP address of the client making the current request.
+	/// </summary>
+	protected string? ClientIp => HttpContext.Connection.RemoteIpAddress?.ToString();
+
+	/// <summary>
+	/// Gets the User-Agent string from the current HTTP request headers.
+	/// </summary>
+	protected string? UserAgent => HttpContext.Request.Headers.UserAgent;
+	
+	/// <summary>
+	/// Retrieves the specified query string parameter value from the current HTTP request.
+	/// Returns null if the parameter does not exist.
+	/// </summary>
+	/// <param name="key">The query parameter key.</param>
+	/// <returns>The parameter value if found; otherwise, null.</returns>
+	protected string? GetQueryParameter(string key) =>
+		HttpContext.Request.Query.TryGetValue(key, out var value) ? value.FirstOrDefault() : null;
 }
 
 // public class BaseController<TService>(TService service) : ApiController where TService : BaseService
