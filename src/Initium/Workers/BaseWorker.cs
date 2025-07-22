@@ -5,10 +5,10 @@ namespace Initium.Workers;
 
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 [SuppressMessage("ReSharper", "UnusedParameter.Global")]
-public abstract class BaseWorker : BackgroundService
+public abstract class BaseWorker(TimeSpan? cycleDelay = null) : BackgroundService
 {
 	private CancellationTokenSource _restartCts = new();
-	protected TimeSpan CycleDelay { get; set; } = TimeSpan.FromSeconds(30);
+	protected TimeSpan CycleDelay { get; set; } = cycleDelay ?? TimeSpan.FromSeconds(30);
 	public bool[]? LaunchConditions { get; set; }
 
 	protected abstract Task DoWork(CancellationToken stoppingToken);
