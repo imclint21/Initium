@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace Initium.Controllers;
 
 /// <summary>
-/// Base API controller providing global filters and routing.
+/// Defines the base API controller within the Initium framework.
+/// Applies essential filters such as exception handling, standardized API responses, and request logging.
+/// Serves as the primary controller for HTTP API endpoints.
 /// </summary>
 [ApiController]
 [Route("[controller]")]

@@ -2,7 +2,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Initium.Controllers;
 
-public class BaseController : ControllerBase
+/// <summary>
+/// Serves as the foundational controller class in the Initium framework.
+/// Provides access to common HTTP request data such as UserId, Client IP, and User-Agent,
+/// and includes utility methods for derived API controllers.
+/// Intended for general-purpose controller logic across the application.
+/// </summary>
+public abstract class BaseController : ControllerBase
 {
 	// protected string? GetClaim(string claimType) => HttpContext.User.Claims.FirstOrDefault(c => c.Type == claimType)?.Value;
 	// protected string UserId => HttpContext.User.Claims.First(claim => claim.Type == "sub").Value;
