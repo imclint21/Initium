@@ -14,4 +14,7 @@ public static class ServiceExtensions
 	
 	public static TService Bind<TService>(this TService service, string key, object value) where TService : BaseService => 
 		service.Set<TService>(svc => svc.Metadata[key] = value);
+    
+	public static TService Bind<TService, TValue>(this TService service, TValue value) where TService : BaseService => 
+		service.Set<TService>(svc => svc.Bindings[typeof(TValue)] = value ?? throw new ArgumentNullException(nameof(value)));
 }
