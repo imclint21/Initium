@@ -36,8 +36,3 @@ public abstract class BaseController : ControllerBase
 	protected string? GetQueryParameter(string key) =>
 		HttpContext.Request.Query.TryGetValue(key, out var value) ? value.FirstOrDefault() : null;
 }
-
-// public class BaseController<TService>(TService service) : ApiController where TService : BaseService
-// {
-// 	protected readonly TService Service = service;
-// }
