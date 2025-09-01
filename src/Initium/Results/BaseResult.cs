@@ -1,4 +1,5 @@
 using System.Net;
+using Initium.Response;
 
 namespace Initium.Results;
 
@@ -25,6 +26,12 @@ public abstract class BaseResult
 	/// Gets or sets the HTTP status code associated with the result, indicating the outcome of the operation.
 	/// </summary>
 	public HttpStatusCode? StatusCode { get; set; }
+	
+	/// <summary>
+	/// Gets or sets the collection of structured errors associated with the result.
+	/// Each <see cref="ApiError"/> provides details such as an error code and description.
+	/// </summary>
+	public IEnumerable<ApiError>? Errors { get; set; }
 	
 	/// <summary>
 	/// Gets or sets metadata associated with the result, which can be mapped to HTTP headers.

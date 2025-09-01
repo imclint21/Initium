@@ -3,6 +3,8 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using Initium.Exceptions;
+using Initium.Response;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Initium.Results;
@@ -20,23 +22,25 @@ public class ServiceResult : BaseResult
     public bool Failed => !Success;
 
     /// <summary>
-    /// Creates a successful <see cref="ServiceResult"/> with an optional message and status code.
+    /// Creates a successful <see cref="ServiceResult"/> with an implicit 200 (handled by filters).
     /// </summary>
-    /// <param name="message">An optional message describing the result.</param>
-    /// <param name="statusCode">The HTTP status code associated with the result. Defaults to <see cref="HttpStatusCode.OK"/>.</param>
-    /// <returns>A successful <see cref="ServiceResult"/>.</returns>
-    public static ServiceResult Ok(string? message = null, HttpStatusCode? statusCode = null) => new()
+    public static ServiceResult Ok() => new()
+    {
+        Success = true
+    };
+
+    /// <summary>
+    /// Creates a successful <see cref="ServiceResult"/> with a message.
+    /// </summary>
+    public static ServiceResult Ok(string message) => new()
     {
         Success = true,
-        Message = message,
-        StatusCode = statusCode
+        Message = message
     };
 
     /// <summary>
     /// Creates a successful <see cref="ServiceResult"/> with a specified status code.
     /// </summary>
-    /// <param name="statusCode">The HTTP status code associated with the result.</param>
-    /// <returns>A successful <see cref="ServiceResult"/>.</returns>
     public static ServiceResult Ok(HttpStatusCode statusCode) => new()
     {
         Success = true,
@@ -44,30 +48,97 @@ public class ServiceResult : BaseResult
     };
 
     /// <summary>
-    /// Creates a failed <see cref="ServiceResult"/> with an optional message and status code.
+    /// Creates a successful <see cref="ServiceResult"/> with a message and status code.
     /// </summary>
-    /// <param name="message">An optional message describing the error.</param>
-    /// <param name="statusCode">The HTTP status code associated with the error. Defaults to <see cref="HttpStatusCode.BadRequest"/>.</param>
-    /// <returns>A failed <see cref="ServiceResult"/>.</returns>
-    public static ServiceResult Error(string? message = null, HttpStatusCode? statusCode = null) => new()
+    public static ServiceResult Ok(string message, HttpStatusCode statusCode) => new()
     {
-        Success = false,
+        Success = true,
         Message = message,
         StatusCode = statusCode
     };
 
     /// <summary>
-    /// Creates a failed <see cref="ServiceResult"/> with a specified status code.
+    /// Creates a failed <see cref="ServiceResult"/> with default status 500.
     /// </summary>
-    /// <param name="statusCode">The HTTP status code associated with the error.</param>
-    /// <returns>A failed <see cref="ServiceResult"/>.</returns>
+    public static ServiceResult Error() => new()
+    {
+        Success = false,
+        StatusCode = HttpStatusCode.InternalServerError
+    };
+
+    /// <summary>
+    /// Creates a failed <see cref="ServiceResult"/> with message and default status 500.
+    /// </summary>
+    public static ServiceResult Error(string message) => new()
+    {
+        Success = false,
+        Message = message,
+        StatusCode = HttpStatusCode.InternalServerError
+    };
+
+    /// <summary>
+    /// Creates a failed <see cref="ServiceResult"/> with a specific status code.
+    /// </summary>
     public static ServiceResult Error(HttpStatusCode statusCode) => new()
     {
         Success = false,
         StatusCode = statusCode
     };
 
+    /// <summary>
+    /// Creates a failed <see cref="ServiceResult"/> with message and status code.
+    /// </summary>
+    public static ServiceResult Error(string message, HttpStatusCode statusCode) => new()
+    {
+        Success = false,
+        Message = message,
+        StatusCode = statusCode
+    };
 
+    // Structured errors
+    /// <summary>
+    /// Creates a failed <see cref="ServiceResult"/> with structured errors and default status 500.
+    /// </summary>
+    public static ServiceResult Error(IEnumerable<ApiError> errors) => new()
+    {
+        Success = false,
+        Errors = errors,
+        StatusCode = HttpStatusCode.InternalServerError
+    };
+
+    /// <summary>
+    /// Creates a failed <see cref="ServiceResult"/> with message and structured errors, default status 500.
+    /// </summary>
+    public static ServiceResult Error(string message, IEnumerable<ApiError> errors) => new()
+    {
+        Success = false,
+        Message = message,
+        Errors = errors,
+        StatusCode = HttpStatusCode.InternalServerError
+    };
+
+    /// <summary>
+    /// Creates a failed <see cref="ServiceResult"/> with structured errors and a specific status code.
+    /// </summary>
+    public static ServiceResult Error(IEnumerable<ApiError> errors, HttpStatusCode statusCode) => new()
+    {
+        Success = false,
+        Errors = errors,
+        StatusCode = statusCode
+    };
+
+    /// <summary>
+    /// Creates a failed <see cref="ServiceResult"/> with message, structured errors and a specific status code.
+    /// </summary>
+    public static ServiceResult Error(string message, IEnumerable<ApiError> errors, HttpStatusCode statusCode) => new()
+    {
+        Success = false,
+        Message = message,
+        Errors = errors,
+        StatusCode = statusCode
+    };
+
+    
     /// <summary>
     /// Creates a failed <see cref="ServiceResult"/> with an exception message.
     /// </summary>
@@ -87,18 +158,52 @@ public class ServiceResult : BaseResult
     /// <returns>The result of the next operation if the current result is successful; otherwise, the current result.</returns>
     public ServiceResult ChainWith(Func<ServiceResult> next) => !this ? this : next();
 
-    public ServiceResult WithMessage(string message)
+    [Obsolete("The message does not look if the operation has failed or not.")]
+    public ServiceResult WithMessage(string? message)
     {
         Message = message;
         return this;
     }
+    
+    /// <summary>
+    /// Sets the message based on a selector function that receives the success flag.
+    /// </summary>
+    /// <param name="messageSelector">A function that selects a message depending on the success of the result.</param>
+    /// <returns>The current <see cref="ServiceResult"/> instance with the updated message.</returns>
+    public ServiceResult WithMessage(Func<bool, string> messageSelector)
+    {
+        Message = messageSelector(Success);
+        return this;
+    }
 
+    /// <summary>
+    /// Sets the status code for the result.
+    /// </summary>
+    /// <param name="statusCode">The HTTP status code to assign.</param>
+    /// <returns>The current <see cref="ServiceResult"/> instance with the updated status code.</returns>
     public ServiceResult WithStatusCode(HttpStatusCode statusCode)
     {
         StatusCode = statusCode;
         return this;
     }
     
+    /// <summary>
+    /// Sets the status code for the result based on a resolver function that receives the success flag.
+    /// </summary>
+    /// <param name="statusCodeResolver">A function that determines the status code depending on the success of the result.</param>
+    /// <returns>The current <see cref="ServiceResult"/> instance with the updated status code.</returns>
+    public ServiceResult WithStatusCode(Func<bool, HttpStatusCode> statusCodeResolver)
+    {
+        StatusCode = statusCodeResolver(Success);
+        return this;
+    }
+    
+    /// <summary>
+    /// Adds or updates a metadata entry for the result.
+    /// </summary>
+    /// <param name="key">The key of the metadata entry.</param>
+    /// <param name="value">The value of the metadata entry.</param>
+    /// <returns>The current <see cref="ServiceResult"/> instance with the updated metadata.</returns>
     public ServiceResult WithMetadata(string key, string value)
     {
         Metadata[key] = value;
@@ -116,19 +221,37 @@ public class ServiceResult : BaseResult
     /// </summary>
     /// <param name="result">The <see cref="ServiceResult"/> to convert.</param>
     public static implicit operator bool(ServiceResult result) => result.Success;
+
+    /// <summary>
+    /// Implicitly converts an <see cref="HttpResponseMessage"/> to a <see cref="ServiceResult"/>.
+    /// Returns a successful result if the HTTP response indicates success; otherwise, returns a failure.
+    /// </summary>
+    /// <param name="httpResponseMessage">The HTTP response message to convert.</param>
+    /// <returns>A <see cref="ServiceResult"/> representing the success or failure of the HTTP response.</returns>
+    public static implicit operator ServiceResult(HttpResponseMessage httpResponseMessage) => httpResponseMessage.IsSuccessStatusCode;
     
+    /// <summary>
+    /// Implicitly converts a <see cref="ServiceResult"/> to its associated <see cref="HttpStatusCode"/>, if any.
+    /// </summary>
+    /// <param name="result">The <see cref="ServiceResult"/> instance from which to retrieve the HTTP status code.</param>
+    /// <returns>The HTTP status code associated with the result, or <c>null</c> if no status code is set.</returns>
     public static implicit operator HttpStatusCode?(ServiceResult result) => result.StatusCode;
     
     /// <summary>
     /// Converts a boolean value to a <see cref="ServiceResult"/>.
     /// </summary>
-    /// <param name="isSuccess">
+    /// <param name="success">
     /// A boolean indicating the result status: <c>true</c> for success, <c>false</c> for an error.
     /// </param>
     /// <returns>
     /// A <see cref="ServiceResult"/> instance representing the success or error state.
     /// </returns>
-    public static implicit operator ServiceResult(bool isSuccess) => isSuccess ? Ok() : Error();
+    public static implicit operator ServiceResult(bool success) => success ? Ok() : Error();
+    
+    public static implicit operator ServiceResult(IdentityResult identityResult) =>
+        identityResult.Succeeded
+            ? Ok()
+            : Error(identityResult.Errors.Select(identityError => new ApiError(identityError.Code, identityError.Description)), HttpStatusCode.BadRequest);
 }
 
 /// <summary>
@@ -141,6 +264,16 @@ public class ServiceResult<TData> : ServiceResult
     /// Gets or sets the data returned by the service operation.
     /// </summary>
     public TData? Data { get; set; }
+
+    /// <summary>
+    /// Creates a successful <see cref="ServiceResult{TData}"/> without any data, defaulting to 200 OK.
+    /// </summary>
+    /// <returns>A successful <see cref="ServiceResult{TData}"/> with no data.</returns>
+    public new static ServiceResult<TData> Ok() => new()
+    {
+        Success = true,
+        StatusCode = HttpStatusCode.OK
+    };
 
     /// <summary>
     /// Creates a successful <see cref="ServiceResult{TData}"/> with the specified data, an optional message, and a status code.
@@ -167,20 +300,88 @@ public class ServiceResult<TData> : ServiceResult
     {
         Success = true,
         Data = data,
-        StatusCode = statusCode
+        StatusCode = statusCode ?? HttpStatusCode.OK
     };
 
     /// <summary>
-    /// Creates a failed <see cref="ServiceResult{TData}"/> with an optional message and status code.
+    /// Creates a failed <see cref="ServiceResult{TData}"/> with default status 500.
     /// </summary>
-    /// <param name="message">An optional message describing the error.</param>
-    /// <param name="statusCode">The HTTP status code associated with the error. Defaults to <see cref="HttpStatusCode.BadRequest"/>.</param>
-    /// <returns>A failed <see cref="ServiceResult{TData}"/>.</returns>
-    public new static ServiceResult<TData> Error(string? message = null, HttpStatusCode? statusCode = null) => new()
+    public new static ServiceResult<TData> Error() => new()
+    {
+        Success = false,
+        StatusCode = HttpStatusCode.InternalServerError
+    };
+
+    /// <summary>
+    /// Creates a failed <see cref="ServiceResult{TData}"/> with message and default status 500.
+    /// </summary>
+    public new static ServiceResult<TData> Error(string message) => new()
+    {
+        Success = false,
+        Message = message,
+        StatusCode = HttpStatusCode.InternalServerError
+    };
+
+    /// <summary>
+    /// Creates a failed <see cref="ServiceResult{TData}"/> with message and status code.
+    /// </summary>
+    public new static ServiceResult<TData> Error(string message, HttpStatusCode statusCode) => new()
     {
         Success = false,
         Message = message,
         StatusCode = statusCode
+    };
+
+    /// <summary>
+    /// Creates a failed <see cref="ServiceResult{TData}"/> with structured errors and default status 500.
+    /// </summary>
+    public new static ServiceResult<TData> Error(IEnumerable<ApiError> errors) => new()
+    {
+        Success = false,
+        Errors = errors,
+        StatusCode = HttpStatusCode.InternalServerError
+    };
+
+    /// <summary>
+    /// Creates a failed <see cref="ServiceResult{TData}"/> with message and structured errors, default status 500.
+    /// </summary>
+    public new static ServiceResult<TData> Error(string message, IEnumerable<ApiError> errors) => new()
+    {
+        Success = false,
+        Message = message,
+        Errors = errors,
+        StatusCode = HttpStatusCode.InternalServerError
+    };
+
+    /// <summary>
+    /// Creates a failed <see cref="ServiceResult{TData}"/> with structured errors and status code.
+    /// </summary>
+    public new static ServiceResult<TData> Error(IEnumerable<ApiError> errors, HttpStatusCode statusCode) => new()
+    {
+        Success = false,
+        Errors = errors,
+        StatusCode = statusCode
+    };
+
+    /// <summary>
+    /// Creates a failed <see cref="ServiceResult{TData}"/> with message, structured errors and status code.
+    /// </summary>
+    public new static ServiceResult<TData> Error(string message, IEnumerable<ApiError> errors, HttpStatusCode statusCode) => new()
+    {
+        Success = false,
+        Message = message,
+        Errors = errors,
+        StatusCode = statusCode
+    };
+
+    /// <summary>
+    /// Creates a failed <see cref="ServiceResult{TData}"/> from an exception with default status 500.
+    /// </summary>
+    public new static ServiceResult<TData> Error(Exception exception) => new()
+    {
+        Success = false,
+        Message = exception.Message,
+        StatusCode = HttpStatusCode.InternalServerError
     };
 
     /// <summary>
@@ -209,7 +410,34 @@ public class ServiceResult<TData> : ServiceResult
         Success = true,
         Data = data
     };
+    
+    /// <summary>
+    /// Implicitly converts an <see cref="HttpResponseMessage"/> to a <see cref="ServiceResult{TData}"/>.
+    /// If the HTTP response indicates success, reads and assigns the response content as <typeparamref name="TData"/>.
+    /// Otherwise, sets the <c>Data</c> to <c>default</c>.
+    /// </summary>
+    /// <param name="httpResponseMessage">The HTTP response message to convert.</param>
+    /// <returns>
+    /// A <see cref="ServiceResult{TData}"/> representing the success or failure of the HTTP response,
+    /// with data deserialized from the response body if successful.
+    /// </returns>
+    public static implicit operator ServiceResult<TData>(HttpResponseMessage httpResponseMessage) => new()
+    {
+        Success = httpResponseMessage.IsSuccessStatusCode,
+        Data = httpResponseMessage.IsSuccessStatusCode ? httpResponseMessage.Content.ReadFromJsonAsync<TData>().Result : default
+    };
 
+    /// <summary>
+    /// Implicitly converts an <see cref="IdentityResult"/> into a <see cref="ServiceResult{TData}"/>.
+    /// Returns <see cref="Ok()"/> if the identity result succeeded, otherwise returns an <see cref="Error(IEnumerable{ApiError}, HttpStatusCode)"/>.
+    /// </summary>
+    /// <param name="identityResult">The <see cref="IdentityResult"/> to convert.</param>
+    /// <returns>A <see cref="ServiceResult{TData}"/> representing the identity operation outcome.</returns>
+    public static implicit operator ServiceResult<TData>(IdentityResult identityResult) =>
+        identityResult.Succeeded
+            ? Ok()
+            : Error(identityResult.Errors.Select(identityError => new ApiError(identityError.Code, identityError.Description)), HttpStatusCode.BadRequest);
+    
     /// <summary>
     /// Tries to unwrap the data contained in the result, returning null if the data is null.
     /// </summary> 
@@ -217,12 +445,54 @@ public class ServiceResult<TData> : ServiceResult
     public TData? Unwrap() => Data;
 
     /// <summary>
-    /// Unwraps the data contained in the result, throwing an exception if the data is null.
-    /// Allows overriding the HTTP status code and message.
+    /// Unwraps the data contained in the result, or throws an <see cref="ApiException"/> if the data is null.
+    /// This method is useful for enforcing the presence of data in a service result, with customizable error details.
     /// </summary>
-    /// <param name="statusCode">The HTTP status code for the exception. Defaults to InternalServerError.</param>
-    /// <param name="message">The custom message for the exception. Defaults to a generic message.</param>
-    /// <returns>The unwrapped data.</returns>
-    /// <exception cref="ApiException">Thrown if the data is null.</exception>
-    public TData UnwrapOrThrow(HttpStatusCode statusCode = HttpStatusCode.InternalServerError, string? message = null) => Data ?? throw new ApiException(statusCode, message ?? "Unwrapping failed, data is null.");
+    /// <typeparam name="TData">The type of data contained in the result.</typeparam>
+    /// <param name="statusCode">
+    /// The HTTP status code to use in the exception if the data is null.
+    /// Defaults to <see cref="HttpStatusCode.InternalServerError"/> if not specified and no default status code exists.
+    /// </param>
+    /// <param name="message">
+    /// A custom error message to include in the exception.
+    /// If not provided, the method will use the predefined message associated with the result, or a generic message.
+    /// </param>
+    /// <returns>The unwrapped data of type <typeparamref name="TData"/>.</returns>
+    /// <exception cref="ApiException">
+    /// Thrown if the data is null. The exception includes the provided or default HTTP status code and message.
+    /// </exception>
+    public TData UnwrapOrThrow(HttpStatusCode? statusCode = null, string? message = null) => 
+        Data ?? throw new ApiException(statusCode ?? StatusCode ?? HttpStatusCode.InternalServerError, message ?? Message);
+
+    /// <summary>
+    /// Always throws a new exception of type <typeparamref name="TException"/>.
+    /// This method never returns and is typically used to enforce a failure path with a specific exception type.
+    /// </summary>
+    /// <typeparam name="TException">The type of exception to throw.</typeparam>
+    /// <returns>This method never returns.</returns>
+    /// <exception cref="Exception">Always thrown as the concrete type specified by <typeparamref name="TException"/>.</exception>
+    public TData UnwrapOrThrow<TException>() where TException : Exception, new()
+    {
+        var exception = new TException();
+        throw exception switch
+        {
+            ArgumentException => new ArgumentException("LOL"),
+            _ => exception
+        };
+    }
+
+    /// <summary>
+    /// Throws an <see cref="ApiException"/> if the result indicates failure.
+    /// </summary>
+    /// <param name="statusCode">Optional custom status code to use in the exception.</param>
+    /// <param name="message">Optional custom message to use in the exception.</param>
+    /// <exception cref="ApiException">Thrown when the result has failed.</exception>
+    [Obsolete("Use UnwrapOrThrow or explicit error handling instead.")]
+    public void ThrowIfFailed(HttpStatusCode? statusCode = null, string? message = null)
+    {
+        if (Failed)
+        {
+            throw new ApiException(statusCode ?? StatusCode ?? HttpStatusCode.InternalServerError, message ?? Message);
+        }
+    }
 }
