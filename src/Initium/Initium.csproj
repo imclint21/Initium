@@ -6,7 +6,7 @@
 		<Nullable>enable</Nullable>
 		<AssemblyName>Initium</AssemblyName>
 		<RootNamespace>Initium</RootNamespace>
-		<Version>0.2.8</Version>
+		<Version>0.2.9</Version>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageId>Initium</PackageId>
 		<Title>Initium</Title>
