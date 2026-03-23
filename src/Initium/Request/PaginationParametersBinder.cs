@@ -13,7 +13,7 @@ public class PaginationParametersBinder : IModelBinder
 		var pagination = new PaginationParameters
 		{
 			Page = int.TryParse(query["Page"], out var page) ? page : 1,
-			PageSize = int.TryParse(query["PageSize"], out var pageSize) ? pageSize : 10
+			PageSize = int.TryParse(query["PageSize"], out var pageSize) ? pageSize : 30
 		};
 
 		bindingContext.Result = ModelBindingResult.Success(pagination);

@@ -17,18 +17,6 @@ public class PaginateAttribute : ActionFilterAttribute
 
 		_paginationParameters ??= new PaginationParameters();
 		_paginationParameters.PageSize = PageSize;
-		
-		// context.ActionArguments["pagination"] = _paginationParameters;
-		// if (_paginationParameters == null)
-		// {
-		// 	_paginationParameters = new PaginationParameters();
-		// 	context.ActionArguments["pagination"] = _paginationParameters;
-		// }
-		//
-		// if (_paginationParameters.PageSize <= 0)
-		// {
-		// 	_paginationParameters.PageSize = PageSize;
-		// }
 	}
 
 	public override void OnActionExecuted(ActionExecutedContext context)
@@ -36,7 +24,25 @@ public class PaginateAttribute : ActionFilterAttribute
 		if (_paginationParameters == null) return;
 
 		if (context.Result is not ObjectResult { Value: IEnumerable<object> collection } objectResult) return;
-		
-		objectResult.Value = collection.ApplyPagination(_paginationParameters);
+
+		var items = collection as IList<object> ?? collection.ToList();
+		var totalCount = items.Count;
+
+		if (_paginationParameters.PageSize >= 0)
+		{
+			var totalPages = (int)Math.Ceiling((double)totalCount / _paginationParameters.PageSize);
+
+			context.HttpContext.Response.Headers["X-Pagination-Page"] = _paginationParameters.Page.ToString();
+			context.HttpContext.Response.Headers["X-Pagination-PageSize"] = _paginationParameters.PageSize.ToString();
+			context.HttpContext.Response.Headers["X-Pagination-TotalCount"] = totalCount.ToString();
+			context.HttpContext.Response.Headers["X-Pagination-TotalPages"] = totalPages.ToString();
+
+			objectResult.Value = items.ApplyPagination(_paginationParameters);
+		}
+		else
+		{
+			context.HttpContext.Response.Headers["X-Pagination-TotalCount"] = totalCount.ToString();
+			objectResult.Value = items;
+		}
 	}
 }
