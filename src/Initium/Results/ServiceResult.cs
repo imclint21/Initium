@@ -466,25 +466,19 @@ public class ServiceResult<TData> : ServiceResult
     /// <exception cref="ApiException">
     /// Thrown if the data is null. The exception includes the provided or default HTTP status code and message.
     /// </exception>
-    public TData UnwrapOrThrow(HttpStatusCode? statusCode = null, string? message = null) => 
+    public TData UnwrapOrThrow(HttpStatusCode? statusCode = null, string? message = null) =>
         Data ?? throw new ApiException(statusCode ?? StatusCode ?? HttpStatusCode.InternalServerError, message ?? Message);
 
     /// <summary>
-    /// Always throws a new exception of type <typeparamref name="TException"/>.
-    /// This method never returns and is typically used to enforce a failure path with a specific exception type.
+    /// Returns the data if present, otherwise returns the specified fallback value.
     /// </summary>
-    /// <typeparam name="TException">The type of exception to throw.</typeparam>
-    /// <returns>This method never returns.</returns>
-    /// <exception cref="Exception">Always thrown as the concrete type specified by <typeparamref name="TException"/>.</exception>
-    public TData UnwrapOrThrow<TException>() where TException : Exception, new()
-    {
-        var exception = new TException();
-        throw exception switch
-        {
-            ArgumentException => new ArgumentException("LOL"),
-            _ => exception
-        };
-    }
+    public TData UnwrapOr(TData fallback) => Data ?? fallback;
+
+    /// <summary>
+    /// Returns the data if present, otherwise throws a new exception of the specified type.
+    /// </summary>
+    public TData UnwrapOrThrow<TException>() where TException : Exception, new() =>
+        Data ?? throw new TException();
 
     /// <summary>
     /// Throws an <see cref="ApiException"/> if the result indicates failure.
