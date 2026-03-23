@@ -2,8 +2,12 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Initium.Request;
 
+/// <summary>
+/// Custom model binder that extracts <see cref="PaginationParameters"/> from query string values.
+/// </summary>
 public class PaginationParametersBinder : IModelBinder
 {
+	/// <inheritdoc />
 	public Task BindModelAsync(ModelBindingContext bindingContext)
 	{
 		ArgumentNullException.ThrowIfNull(bindingContext);

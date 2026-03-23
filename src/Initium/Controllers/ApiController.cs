@@ -21,20 +21,13 @@ namespace Initium.Controllers;
 public abstract class ApiController : BaseController;
 
 /// <summary>
-/// Generic API controller that provides lazy access to a service of type TService.
+/// Generic API controller that provides lazy access to a registered service of type <typeparamref name="TService"/>.
 /// </summary>
+/// <typeparam name="TService">The service type, must inherit from <see cref="BaseService"/>.</typeparam>
 public abstract class ApiController<TService> : ApiController where TService : BaseService
 {
+	/// <summary>
+	/// Gets the service instance resolved from the dependency injection container.
+	/// </summary>
 	protected TService Service => (TService?)HttpContext.RequestServices.GetService(typeof(TService)) ?? throw new ApiException(HttpStatusCode.InternalServerError, $"Service of type `{typeof(TService).Name}` is not registered in the dependency injection container.");
 }
-
-// handle this
-// public static ActionResult<T> OrFallbackWithStatusCode<T>(this T? baseEntity, HttpStatusCode statusCode) =>
-// 	baseEntity != null ? new OkObjectResult(baseEntity) : new StatusCodeResult((int)statusCode);
-
-// Add serializable to exceptions
-// [Serializable]
-
-// handle new/override
-// return ServiceResult.Ok("COOL").As<SignUpResponse>();
-// return ServiceResult<SignUpResponse>.Ok("COOL");

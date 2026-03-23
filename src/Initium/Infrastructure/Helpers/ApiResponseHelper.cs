@@ -57,6 +57,11 @@ internal static class ApiResponseHelper
         _ => "An internal server error occurred."
     };
     
+    /// <summary>
+    /// Returns the default HTTP status code based on the request method.
+    /// </summary>
+    /// <param name="context">The HTTP context.</param>
+    /// <returns>The default status code for the request method.</returns>
     public static HttpStatusCode GetDefaultStatusCode(HttpContext context) => context.Request.Method.ToUpper() switch
     {
         "POST" => HttpStatusCode.Created,
@@ -65,6 +70,12 @@ internal static class ApiResponseHelper
         _ => context.Response.StatusCode > 0 ? (HttpStatusCode)context.Response.StatusCode : HttpStatusCode.InternalServerError
     };
 
+    /// <summary>
+    /// Retrieves the message from an <see cref="ApiResponseAttribute"/> matching the specified status code.
+    /// </summary>
+    /// <param name="actionDescriptor">The action descriptor.</param>
+    /// <param name="statusCode">The HTTP status code to match.</param>
+    /// <returns>The message if found; otherwise, <c>null</c>.</returns>
     public static string? GetApiResponseMessage(ActionDescriptor actionDescriptor, HttpStatusCode statusCode) =>
         GetApiResponseAttributes(actionDescriptor).FirstOrDefault(attribute => attribute.StatusCode == statusCode)?.Message;
 }

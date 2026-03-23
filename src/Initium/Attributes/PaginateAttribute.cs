@@ -5,12 +5,21 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Initium.Attributes;
 
+/// <summary>
+/// Automatically paginates <see cref="IEnumerable{T}"/> results and adds pagination headers to the response.
+/// Use <c>PageSize = -1</c> to disable pagination while still returning the total count header.
+/// </summary>
 [AttributeUsage(AttributeTargets.Method)]
 public class PaginateAttribute : ActionFilterAttribute
 {
 	private PaginationParameters? _paginationParameters;
+
+	/// <summary>
+	/// Gets or sets the default page size. Defaults to 30.
+	/// </summary>
 	public int PageSize { get; set; } = 30;
 
+	/// <inheritdoc />
 	public override void OnActionExecuting(ActionExecutingContext context)
 	{
 		_paginationParameters = context.ActionArguments.Values.FirstOrDefault(arg => arg is PaginationParameters) as PaginationParameters;
@@ -19,6 +28,7 @@ public class PaginateAttribute : ActionFilterAttribute
 		_paginationParameters.PageSize = PageSize;
 	}
 
+	/// <inheritdoc />
 	public override void OnActionExecuted(ActionExecutedContext context)
 	{
 		if (_paginationParameters == null) return;

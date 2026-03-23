@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Initium.Extensions;
 
+/// <summary>
+/// Provides extension methods for <see cref="IdentityResult"/>.
+/// </summary>
 public static class IdentityResultExtensions
 {
 	/// <summary>

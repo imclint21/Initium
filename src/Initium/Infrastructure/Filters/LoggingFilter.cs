@@ -7,12 +7,17 @@ using Microsoft.Extensions.Logging;
 
 namespace Initium.Infrastructure.Filters;
 
+/// <summary>
+/// Logs HTTP request details including method, path, status code, and elapsed time.
+/// </summary>
 public class LoggingFilter : IResultFilter
 {
 	private readonly Stopwatch _stopwatch = Stopwatch.StartNew();
 
+	/// <inheritdoc />
 	public void OnResultExecuting(ResultExecutingContext context) { }
 
+	/// <inheritdoc />
 	public void OnResultExecuted(ResultExecutedContext context)
 	{
 		var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<LoggingFilter>>();
