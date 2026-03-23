@@ -1,9 +1,19 @@
-# Initium — Service Core Foundation
+<p align="center">
+  <img src="https://raw.githubusercontent.com/imclint21/Initium/master/src/Initium/logo.png" height="100" alt="Initium" />
+</p>
 
-[![Publish NuGet](https://github.com/imclint21/Initium/actions/workflows/publish.yml/badge.svg?branch=master)](https://github.com/imclint21/Initium/actions/workflows/publish.yml)
-![DotNet](https://img.shields.io/badge/.NET-8.0%20LTS-blue)
-![MIT License](https://img.shields.io/badge/license-MIT-lightgrey.svg)
-[![NuGet Version](https://img.shields.io/nuget/v/Initium)](https://www.nuget.org/packages/Initium/)
+<h3 align="center">Initium</h3>
+
+<p align="center">
+  Service Core Foundation for .NET API development.
+</p>
+
+<p align="center">
+  <a href="https://github.com/imclint21/Initium/actions/workflows/publish.yml"><img src="https://github.com/imclint21/Initium/actions/workflows/publish.yml/badge.svg?branch=master" /></a>
+  <a href="https://www.nuget.org/packages/Initium/"><img src="https://img.shields.io/nuget/v/Initium" /></a>
+  <img src="https://img.shields.io/badge/.NET-8.0%20LTS-blue" />
+  <img src="https://img.shields.io/badge/license-MIT-lightgrey.svg" />
+</p>
 
 ## Introduction
 
@@ -50,11 +60,20 @@ public class CoffeeService
     {
         var doSomethingResult = DoSomething();
         if (doSomethingResult == false) return doSomethingResult;
-        
+
         return ServiceResult.Ok("The coffee is now DONE!");
     }
 }
 ```
+
+## Documentation
+
+See the [docs/](docs/) folder for detailed documentation:
+
+- [Getting Started](docs/getting-started.md)
+- [Service Results](docs/service-results.md)
+- [Controllers & Attributes](docs/controllers.md)
+- [Examples](docs/examples.md)
 
 ## Contribute to Initium
 
