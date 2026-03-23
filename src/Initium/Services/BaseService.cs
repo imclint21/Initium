@@ -12,7 +12,7 @@ namespace Initium.Services;
 [SuppressMessage("ReSharper", "CollectionNeverQueried.Global")]
 public abstract class BaseService
 {
-	public Dictionary<Type, object> Bindings { get; set; } = new();
+	internal Dictionary<Type, object> Bindings { get; set; } = new();
 	
     /// <summary>
     /// (Optional) Stores the current HTTP context associated with the service instance.
@@ -43,6 +43,3 @@ public abstract class BaseService
 
 	protected TValue? GetBinding<TValue>() => Bindings.TryGetValue(typeof(TValue), out var value) ? (TValue)value : default;
 }
-
-// public class BaseService<TEntity> : BaseService where TEntity : BaseEntity;
-// public class BaseService<TEntity, TKey> : BaseService where TEntity : BaseEntity<TKey>;
