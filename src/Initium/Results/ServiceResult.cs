@@ -158,6 +158,11 @@ public class ServiceResult : BaseResult
     /// <returns>The result of the next operation if the current result is successful; otherwise, the current result.</returns>
     public ServiceResult ChainWith(Func<ServiceResult> next) => !this ? this : next();
 
+    /// <summary>
+    /// Chains the current result with a typed operation if the current result is successful.
+    /// </summary>
+    public ServiceResult<TData> ChainWith<TData>(Func<ServiceResult<TData>> next) => !this ? this.As<TData>() : next();
+
     [Obsolete("The message does not look if the operation has failed or not.")]
     public ServiceResult WithMessage(string? message)
     {
