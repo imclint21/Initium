@@ -32,7 +32,7 @@ public abstract class BaseWorker(TimeSpan? cycleDelay = null) : BackgroundServic
 	/// Determines whether the worker is eligible to execute based on <see cref="LaunchConditions"/>.
 	/// </summary>
 	/// <returns><c>true</c> if all conditions are met or no conditions are set; otherwise, <c>false</c>.</returns>
-	protected virtual bool IsEligibleAsync() => LaunchConditions == null || LaunchConditions.All(condition => condition);
+	protected virtual bool IsEligible() => LaunchConditions == null || LaunchConditions.All(condition => condition);
 
 	/// <inheritdoc />
 	protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -43,7 +43,7 @@ public abstract class BaseWorker(TimeSpan? cycleDelay = null) : BackgroundServic
 
 			try
 			{
-				if (IsEligibleAsync())
+				if (IsEligible())
 				{
 					await DoWork(linkedCts.Token);
 				}
