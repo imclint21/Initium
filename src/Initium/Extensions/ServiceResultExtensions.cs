@@ -41,4 +41,49 @@ public static class ServiceResultExtensions
 		StatusCode = serviceResult.StatusCode,
 		Data = default
 	};
+
+	public static async Task<TData?> Unwrap<TData>(this Task<ServiceResult<TData>> task) =>
+		(await task).Unwrap();
+
+	public static async Task<TData> UnwrapOrThrow<TData>(this Task<ServiceResult<TData>> task, HttpStatusCode? statusCode = null, string? message = null) =>
+		(await task).UnwrapOrThrow(statusCode, message);
+
+	public static async Task<TData> UnwrapOr<TData>(this Task<ServiceResult<TData>> task, TData fallback) =>
+		(await task).UnwrapOr(fallback);
+
+	public static async Task<ServiceResult<TData>> WithData<TData>(this Task<ServiceResult> task, TData data) =>
+		(await task).WithData(data);
+
+	public static async Task<ServiceResult<TData>> As<TData>(this Task<ServiceResult> task) =>
+		(await task).As<TData>();
+
+	// Sync result -> async next (untyped)
+	public static async Task<ServiceResult> ChainWith(this ServiceResult result, Func<Task<ServiceResult>> next) =>
+		!result ? result : await next();
+
+	// Sync result -> async next (typed)
+	public static async Task<ServiceResult<TData>> ChainWith<TData>(this ServiceResult result, Func<Task<ServiceResult<TData>>> next) =>
+		!result ? result.As<TData>() : await next();
+
+	// Task result -> sync next (untyped)
+	public static async Task<ServiceResult> ChainWith(this Task<ServiceResult> task, Func<ServiceResult> next) =>
+		(await task).ChainWith(next);
+
+	// Task result -> sync next (typed)
+	public static async Task<ServiceResult<TData>> ChainWith<TData>(this Task<ServiceResult> task, Func<ServiceResult<TData>> next) =>
+		(await task).ChainWith(next);
+
+	// Task result -> async next (untyped)
+	public static async Task<ServiceResult> ChainWith(this Task<ServiceResult> task, Func<Task<ServiceResult>> next)
+	{
+		var result = await task;
+		return !result ? result : await next();
+	}
+
+	// Task result -> async next (typed)
+	public static async Task<ServiceResult<TData>> ChainWith<TData>(this Task<ServiceResult> task, Func<Task<ServiceResult<TData>>> next)
+	{
+		var result = await task;
+		return !result ? result.As<TData>() : await next();
+	}
 }
