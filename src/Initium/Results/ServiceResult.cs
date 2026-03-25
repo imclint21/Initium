@@ -163,7 +163,11 @@ public class ServiceResult : BaseResult
     /// </summary>
     public ServiceResult<TData> ChainWith<TData>(Func<ServiceResult<TData>> next) => !this ? this.As<TData>() : next();
 
-    [Obsolete("The message does not look if the operation has failed or not.")]
+    /// <summary>
+    /// Sets the message for the result.
+    /// </summary>
+    /// <param name="message">The message to assign.</param>
+    /// <returns>The current <see cref="ServiceResult"/> instance with the updated message.</returns>
     public ServiceResult WithMessage(string? message)
     {
         Message = message;
@@ -486,7 +490,6 @@ public class ServiceResult<TData> : ServiceResult
     /// <param name="statusCode">Optional custom status code to use in the exception.</param>
     /// <param name="message">Optional custom message to use in the exception.</param>
     /// <exception cref="ApiException">Thrown when the result has failed.</exception>
-    [Obsolete("Use UnwrapOrThrow or explicit error handling instead.")]
     public void ThrowIfFailed(HttpStatusCode? statusCode = null, string? message = null)
     {
         if (Failed)
