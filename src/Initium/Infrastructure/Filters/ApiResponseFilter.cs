@@ -41,6 +41,10 @@ internal class ApiResponseFilter : ActionFilterAttribute
 	        ?? ApiResponseHelper.GetApiResponseMessage(context.ActionDescriptor, statusCode) 
 	        ?? ApiResponseHelper.GetDefaultMessageForStatusCode(statusCode);
 
+        // Propagate structured errors from the ServiceResult to the API response.
+        if (serviceResult.Errors != null)
+	        apiResponseBuilder.WithErrors(serviceResult.Errors.ToArray());
+
         // Determine the appropriate response based on the status code:
         // - For 204 (No Content) and 304 (Not Modified), set a StatusCodeResult without a response body.
         // - For other status codes, construct a standardized ApiResponse object including HTTP context details.
