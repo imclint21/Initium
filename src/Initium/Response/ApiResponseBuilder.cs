@@ -125,8 +125,25 @@ internal class ApiResponseBuilder
     /// Builds and returns the constructed <see cref="Response.ApiResponse"/> as a <see cref="JsonResult"/>.
     /// </summary>
     /// <returns>A <see cref="JsonResult"/> containing the constructed <see cref="Response.ApiResponse"/>.</returns>
-    public JsonResult BuildAsJsonResult() => new(ApiResponse)
+    public JsonResult BuildAsJsonResult()
     {
-        StatusCode = ApiResponse.StatusCode
-    };
+        var result = new JsonResult(ApiResponse)
+        {
+            StatusCode = ApiResponse.StatusCode
+        };
+
+        return result;
+    }
+
+    /// <summary>
+    /// Writes any custom headers from the <see cref="ApiResponse"/> into the HTTP response.
+    /// Should be called before the result is executed.
+    /// </summary>
+    public void ApplyHeaders(Microsoft.AspNetCore.Http.HttpContext context)
+    {
+        if (ApiResponse.CustomHeaders == null) return;
+
+        foreach (var header in ApiResponse.CustomHeaders)
+            context.Response.Headers[header.Key] = header.Value;
+    }
 }

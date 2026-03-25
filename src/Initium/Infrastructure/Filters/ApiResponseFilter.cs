@@ -45,16 +45,25 @@ internal class ApiResponseFilter : ActionFilterAttribute
         if (serviceResult.Errors != null)
 	        apiResponseBuilder.WithErrors(serviceResult.Errors.ToArray());
 
+        // Propagate metadata from the ServiceResult as HTTP response headers.
+        if (serviceResult.Metadata.Count > 0)
+	        apiResponseBuilder.WithCustomHeaders(serviceResult.Metadata);
+
+        // Build the final response with status code and message.
+        apiResponseBuilder
+	        .WithStatusCode(statusCode)
+	        .WithMessage(message);
+
+        // Write custom headers (from metadata and attributes) to the HTTP response.
+        apiResponseBuilder.ApplyHeaders(context.HttpContext);
+
         // Determine the appropriate response based on the status code:
         // - For 204 (No Content) and 304 (Not Modified), set a StatusCodeResult without a response body.
         // - For other status codes, construct a standardized ApiResponse object including HTTP context details.
         context.Result = statusCode switch
         {
 	        HttpStatusCode.NoContent or HttpStatusCode.NotModified => new StatusCodeResult((int)statusCode),
-	        _ => apiResponseBuilder
-		        .WithStatusCode(statusCode)
-		        .WithMessage(message)
-		        .BuildAsJsonResult()
+	        _ => apiResponseBuilder.BuildAsJsonResult()
         };
     }
 }
