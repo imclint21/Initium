@@ -556,7 +556,10 @@ public class ServiceResult<TData> : ServiceResult
     public static implicit operator ServiceResult<TData>(HttpResponseMessage httpResponseMessage) => new()
     {
         Success = httpResponseMessage.IsSuccessStatusCode,
-        Data = httpResponseMessage.Content.ReadFromJsonAsync<TData>().Result
+        StatusCode = httpResponseMessage.StatusCode,
+        Data = httpResponseMessage.IsSuccessStatusCode
+            ? httpResponseMessage.Content.ReadFromJsonAsync<TData>().GetAwaiter().GetResult()
+            : default
     };
 
     /// <summary>
