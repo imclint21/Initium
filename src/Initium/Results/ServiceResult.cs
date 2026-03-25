@@ -164,6 +164,11 @@ public class ServiceResult : BaseResult
     public ServiceResult<TData> ChainWith<TData>(Func<ServiceResult<TData>> next) => !this ? this.As<TData>() : next();
 
     /// <summary>
+    /// Returns the data payload for inclusion in API responses. Returns null for non-generic ServiceResult.
+    /// </summary>
+    internal virtual object? GetData() => null;
+
+    /// <summary>
     /// Sets the message for the result.
     /// </summary>
     /// <param name="message">The message to assign.</param>
@@ -295,7 +300,7 @@ public class ServiceResult<TData> : ServiceResult
     /// <summary>
     /// Gets or sets the data returned by the service operation.
     /// </summary>
-    public TData? Data { get; set; }
+    public TData? Data { get; internal set; }
 
     /// <summary>
     /// Creates a successful <see cref="ServiceResult{TData}"/> without any data, defaulting to 200 OK.
@@ -447,6 +452,9 @@ public class ServiceResult<TData> : ServiceResult
         Message = exception.Message,
         StatusCode = HttpStatusCode.InternalServerError
     };
+
+    /// <inheritdoc />
+    internal override object? GetData() => Data;
 
     /// <summary>
     /// Sets the message for the result.

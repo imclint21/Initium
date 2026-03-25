@@ -42,12 +42,9 @@ internal class ApiResponseFilter : ActionFilterAttribute
 	        ?? ApiResponseHelper.GetDefaultMessageForStatusCode(statusCode);
 
         // Propagate data from typed ServiceResult<TData> to the API response.
-        if (serviceResult.GetType().IsGenericType)
-        {
-	        var data = serviceResult.GetType().GetProperty("Data")?.GetValue(serviceResult);
-	        if (data != null)
-		        apiResponseBuilder.WithData(data);
-        }
+        var data = serviceResult.GetData();
+        if (data != null)
+	        apiResponseBuilder.WithData(data);
 
         // Propagate structured errors from the ServiceResult to the API response.
         if (serviceResult.Errors != null)
