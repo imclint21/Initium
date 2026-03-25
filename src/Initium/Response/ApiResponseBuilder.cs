@@ -66,11 +66,16 @@ internal class ApiResponseBuilder
         return this;
     }
 
-    // public ApiResponseBuilder WithData(object data)
-    // {
-    //     ApiResponse.Data = data;
-    //     return this;
-    // }
+    /// <summary>
+    /// Sets the data payload for the API response.
+    /// </summary>
+    /// <param name="data">The data to include in the response.</param>
+    /// <returns>The current instance of the <see cref="ApiResponseBuilder"/>.</returns>
+    public ApiResponseBuilder WithData(object? data)
+    {
+        ApiResponse.Data = data;
+        return this;
+    }
 
     /// <summary>
     /// Adds error messages to the API response.
