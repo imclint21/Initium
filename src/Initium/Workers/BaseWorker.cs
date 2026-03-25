@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Initium.Workers;
 
@@ -8,7 +9,7 @@ namespace Initium.Workers;
 /// </summary>
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 [SuppressMessage("ReSharper", "UnusedParameter.Global")]
-public abstract class BaseWorker(TimeSpan? cycleDelay = null) : BackgroundService
+public abstract class BaseWorker(ILogger? logger = null, TimeSpan? cycleDelay = null) : BackgroundService
 {
 	private CancellationTokenSource _restartCts = new();
 
@@ -52,11 +53,20 @@ public abstract class BaseWorker(TimeSpan? cycleDelay = null) : BackgroundServic
 			catch (OperationCanceledException)
 			{
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
+				OnError(ex);
 			}
 		}
 	}
+
+	/// <summary>
+	/// Called when an unhandled exception occurs during <see cref="DoWork"/>. Logs the error by default.
+	/// Override to customize error handling (e.g. alerting, stopping the worker).
+	/// </summary>
+	/// <param name="exception">The exception that occurred.</param>
+	protected virtual void OnError(Exception exception) =>
+		logger?.LogError(exception, "Unhandled exception in {Worker}", GetType().Name);
 
 	/// <summary>
 	/// Restarts the worker cycle by cancelling the current delay and starting a new one.
