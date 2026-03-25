@@ -30,6 +30,9 @@ public class ApiResponse
 	[JsonIgnore]
 	public Dictionary<string, string>? CustomHeaders { get; set; }
 
+	/// <summary>
+	/// Gets or sets the data payload of the response. Omitted from JSON when null.
+	/// </summary>
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	public object? Data { get; set; }
 }
