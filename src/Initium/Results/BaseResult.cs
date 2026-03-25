@@ -15,28 +15,28 @@ public abstract class BaseResult
 	/// <summary>
 	/// Gets or sets a value indicating whether the operation was successful.
 	/// </summary>
-	public bool Success { get; set; }
+	public bool Success { get; internal set; }
 
 	/// <summary>
 	/// Gets or sets the message providing additional details about the operation or its outcome.
 	/// </summary>
-	public string? Message { get; set; }
+	public string? Message { get; internal set; }
 
 	/// <summary>
 	/// Gets or sets the HTTP status code associated with the result, indicating the outcome of the operation.
 	/// </summary>
-	public HttpStatusCode? StatusCode { get; set; }
-	
+	public HttpStatusCode? StatusCode { get; internal set; }
+
 	/// <summary>
 	/// Gets or sets the collection of structured errors associated with the result.
 	/// Each <see cref="ApiError"/> provides details such as an error code and description.
 	/// </summary>
-	public IEnumerable<ApiError>? Errors { get; set; }
-	
+	public IEnumerable<ApiError>? Errors { get; internal set; }
+
 	/// <summary>
 	/// Gets or sets metadata associated with the result, which can be mapped to HTTP headers.
 	/// </summary>
-	public Dictionary<string, string> Metadata { get; set; } = new();
+	public Dictionary<string, string> Metadata { get; internal set; } = new();
 
 	/// <summary>
 	/// Copies all properties from another <see cref="BaseResult"/> into this instance.
