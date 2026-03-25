@@ -52,7 +52,7 @@ public abstract class BaseWorker(TimeSpan? cycleDelay = null) : BackgroundServic
 			catch (OperationCanceledException)
 			{
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
 			}
 		}
