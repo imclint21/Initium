@@ -26,7 +26,8 @@ public class ServiceResult : BaseResult
     /// </summary>
     public static ServiceResult Ok() => new()
     {
-        Success = true
+        Success = true,
+        StatusCode = HttpStatusCode.OK
     };
 
     /// <summary>
@@ -35,7 +36,8 @@ public class ServiceResult : BaseResult
     public static ServiceResult Ok(string message) => new()
     {
         Success = true,
-        Message = message
+        Message = message,
+        StatusCode = HttpStatusCode.OK
     };
 
     /// <summary>
@@ -95,7 +97,6 @@ public class ServiceResult : BaseResult
         StatusCode = statusCode
     };
 
-    // Structured errors
     /// <summary>
     /// Creates a failed <see cref="ServiceResult"/> with structured errors and default status 500.
     /// </summary>
@@ -138,7 +139,6 @@ public class ServiceResult : BaseResult
         StatusCode = statusCode
     };
 
-    
     /// <summary>
     /// Creates a failed <see cref="ServiceResult"/> with an exception message.
     /// </summary>
@@ -173,7 +173,7 @@ public class ServiceResult : BaseResult
         Message = message;
         return this;
     }
-    
+
     /// <summary>
     /// Sets the message based on a selector function that receives the success flag.
     /// </summary>
@@ -195,7 +195,7 @@ public class ServiceResult : BaseResult
         StatusCode = statusCode;
         return this;
     }
-    
+
     /// <summary>
     /// Sets the status code for the result based on a resolver function that receives the success flag.
     /// </summary>
@@ -206,7 +206,7 @@ public class ServiceResult : BaseResult
         StatusCode = statusCodeResolver(Success);
         return this;
     }
-    
+
     /// <summary>
     /// Adds or updates a metadata entry for the result.
     /// </summary>
@@ -241,7 +241,7 @@ public class ServiceResult : BaseResult
         Errors = errors;
         return this;
     }
-
+    
     /// <summary>
     /// Converts the current <see cref="ServiceResult"/> into an <see cref="ActionResult"/> for use in ASP.NET Core.
     /// </summary>
@@ -308,6 +308,42 @@ public class ServiceResult<TData> : ServiceResult
     };
 
     /// <summary>
+    /// Creates a successful <see cref="ServiceResult{TData}"/> with a message and default status 200.
+    /// </summary>
+    /// <param name="message">A message describing the result.</param>
+    /// <returns>A successful <see cref="ServiceResult{TData}"/> with no data.</returns>
+    public new static ServiceResult<TData> Ok(string message) => new()
+    {
+        Success = true,
+        Message = message,
+        StatusCode = HttpStatusCode.OK
+    };
+
+    /// <summary>
+    /// Creates a successful <see cref="ServiceResult{TData}"/> with a specified status code.
+    /// </summary>
+    /// <param name="statusCode">The HTTP status code associated with the result.</param>
+    /// <returns>A successful <see cref="ServiceResult{TData}"/> with no data.</returns>
+    public new static ServiceResult<TData> Ok(HttpStatusCode statusCode) => new()
+    {
+        Success = true,
+        StatusCode = statusCode
+    };
+
+    /// <summary>
+    /// Creates a successful <see cref="ServiceResult{TData}"/> with a message and status code.
+    /// </summary>
+    /// <param name="message">A message describing the result.</param>
+    /// <param name="statusCode">The HTTP status code associated with the result.</param>
+    /// <returns>A successful <see cref="ServiceResult{TData}"/> with no data.</returns>
+    public new static ServiceResult<TData> Ok(string message, HttpStatusCode statusCode) => new()
+    {
+        Success = true,
+        Message = message,
+        StatusCode = statusCode
+    };
+
+    /// <summary>
     /// Creates a successful <see cref="ServiceResult{TData}"/> with the specified data, an optional message, and a status code.
     /// </summary>
     /// <param name="data">The data returned by the operation.</param>
@@ -319,19 +355,6 @@ public class ServiceResult<TData> : ServiceResult
         Success = true,
         Data = data,
         Message = message,
-        StatusCode = statusCode
-    };
-
-    /// <summary>
-    /// Creates a successful <see cref="ServiceResult{TData}"/> with the specified data and status code.
-    /// </summary>
-    /// <param name="data">The data returned by the operation.</param>
-    /// <param name="statusCode">The HTTP status code associated with the result.</param>
-    /// <returns>A successful <see cref="ServiceResult{TData}"/>.</returns>
-    public static ServiceResult<TData> Ok(TData data, HttpStatusCode? statusCode = null) => new()
-    {
-        Success = true,
-        Data = data,
         StatusCode = statusCode ?? HttpStatusCode.OK
     };
 
@@ -352,6 +375,15 @@ public class ServiceResult<TData> : ServiceResult
         Success = false,
         Message = message,
         StatusCode = HttpStatusCode.InternalServerError
+    };
+
+    /// <summary>
+    /// Creates a failed <see cref="ServiceResult{TData}"/> with a specified status code.
+    /// </summary>
+    public new static ServiceResult<TData> Error(HttpStatusCode statusCode) => new()
+    {
+        Success = false,
+        StatusCode = statusCode
     };
 
     /// <summary>
@@ -414,17 +446,6 @@ public class ServiceResult<TData> : ServiceResult
         Success = false,
         Message = exception.Message,
         StatusCode = HttpStatusCode.InternalServerError
-    };
-
-    /// <summary>
-    /// Creates a failed <see cref="ServiceResult{TData}"/> with a specified status code.
-    /// </summary>
-    /// <param name="statusCode">The HTTP status code associated with the error.</param>
-    /// <returns>A failed <see cref="ServiceResult{TData}"/>.</returns>
-    public new static ServiceResult<TData> Error(HttpStatusCode statusCode) => new()
-    {
-        Success = false,
-        StatusCode = statusCode
     };
 
     /// <summary>
