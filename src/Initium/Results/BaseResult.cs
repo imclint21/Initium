@@ -37,4 +37,16 @@ public abstract class BaseResult
 	/// Gets or sets metadata associated with the result, which can be mapped to HTTP headers.
 	/// </summary>
 	public Dictionary<string, string> Metadata { get; set; } = new();
+
+	/// <summary>
+	/// Copies all properties from another <see cref="BaseResult"/> into this instance.
+	/// </summary>
+	internal void CopyFrom(BaseResult source)
+	{
+		Success = source.Success;
+		Message = source.Message;
+		StatusCode = source.StatusCode;
+		Errors = source.Errors;
+		Metadata = source.Metadata;
+	}
 }

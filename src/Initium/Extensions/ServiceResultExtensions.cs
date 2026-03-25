@@ -15,27 +15,25 @@ public static class ServiceResultExtensions
 	/// <param name="serviceResult">The base result.</param>
 	/// <param name="data">The data to attach.</param>
 	/// <returns>A new <see cref="ServiceResult{TData}"/> with the original status and the specified data.</returns>
-	public static ServiceResult<TData> WithData<TData>(this ServiceResult serviceResult, TData data) => new()
+	public static ServiceResult<TData> WithData<TData>(this ServiceResult serviceResult, TData data)
 	{
-		Success = serviceResult.Success,
-		Message = serviceResult.Message,
-		StatusCode = serviceResult.StatusCode,
-		Data = data
-	};
+		var result = new ServiceResult<TData> { Data = data };
+		result.CopyFrom(serviceResult);
+		return result;
+	}
 
 	/// <summary>
 	/// Converts a <see cref="ServiceResult"/> into a typed <see cref="ServiceResult{TData}"/> with default data.
 	/// </summary>
 	/// <typeparam name="TData">The target data type.</typeparam>
 	/// <param name="serviceResult">The base result to convert.</param>
-	/// <returns>A new <see cref="ServiceResult{TData}"/> preserving the original status, message, and status code.</returns>
-	public static ServiceResult<TData> As<TData>(this ServiceResult serviceResult) => new()
+	/// <returns>A new <see cref="ServiceResult{TData}"/> preserving all properties from the original result.</returns>
+	public static ServiceResult<TData> As<TData>(this ServiceResult serviceResult)
 	{
-		Success = serviceResult.Success,
-		Message = serviceResult.Message,
-		StatusCode = serviceResult.StatusCode,
-		Data = default
-	};
+		var result = new ServiceResult<TData>();
+		result.CopyFrom(serviceResult);
+		return result;
+	}
 
 	/// <summary>
 	/// Asynchronously unwraps the data from a <see cref="ServiceResult{TData}"/>, returning null if absent.
