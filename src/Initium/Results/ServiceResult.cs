@@ -218,7 +218,30 @@ public class ServiceResult : BaseResult
         Metadata[key] = value;
         return this;
     }
-    
+
+    /// <summary>
+    /// Adds or updates a metadata entry based on a selector function that receives the success flag.
+    /// </summary>
+    /// <param name="key">The key of the metadata entry.</param>
+    /// <param name="valueSelector">A function that selects the metadata value depending on the success of the result.</param>
+    /// <returns>The current <see cref="ServiceResult"/> instance with the updated metadata.</returns>
+    public ServiceResult WithMetadata(string key, Func<bool, string> valueSelector)
+    {
+        Metadata[key] = valueSelector(Success);
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the structured errors for the result.
+    /// </summary>
+    /// <param name="errors">The errors to assign.</param>
+    /// <returns>The current <see cref="ServiceResult"/> instance with the updated errors.</returns>
+    public ServiceResult WithErrors(IEnumerable<ApiError> errors)
+    {
+        Errors = errors;
+        return this;
+    }
+
     /// <summary>
     /// Converts the current <see cref="ServiceResult"/> into an <see cref="ActionResult"/> for use in ASP.NET Core.
     /// </summary>
@@ -403,6 +426,85 @@ public class ServiceResult<TData> : ServiceResult
         Success = false,
         StatusCode = statusCode
     };
+
+    /// <summary>
+    /// Sets the message for the result.
+    /// </summary>
+    /// <param name="message">The message to assign.</param>
+    /// <returns>The current <see cref="ServiceResult{TData}"/> instance with the updated message.</returns>
+    public new ServiceResult<TData> WithMessage(string? message)
+    {
+        Message = message;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the message based on a selector function that receives the success flag.
+    /// </summary>
+    /// <param name="messageSelector">A function that selects a message depending on the success of the result.</param>
+    /// <returns>The current <see cref="ServiceResult{TData}"/> instance with the updated message.</returns>
+    public new ServiceResult<TData> WithMessage(Func<bool, string> messageSelector)
+    {
+        Message = messageSelector(Success);
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the status code for the result.
+    /// </summary>
+    /// <param name="statusCode">The HTTP status code to assign.</param>
+    /// <returns>The current <see cref="ServiceResult{TData}"/> instance with the updated status code.</returns>
+    public new ServiceResult<TData> WithStatusCode(HttpStatusCode statusCode)
+    {
+        StatusCode = statusCode;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the status code for the result based on a resolver function that receives the success flag.
+    /// </summary>
+    /// <param name="statusCodeResolver">A function that determines the status code depending on the success of the result.</param>
+    /// <returns>The current <see cref="ServiceResult{TData}"/> instance with the updated status code.</returns>
+    public new ServiceResult<TData> WithStatusCode(Func<bool, HttpStatusCode> statusCodeResolver)
+    {
+        StatusCode = statusCodeResolver(Success);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds or updates a metadata entry for the result.
+    /// </summary>
+    /// <param name="key">The key of the metadata entry.</param>
+    /// <param name="value">The value of the metadata entry.</param>
+    /// <returns>The current <see cref="ServiceResult{TData}"/> instance with the updated metadata.</returns>
+    public new ServiceResult<TData> WithMetadata(string key, string value)
+    {
+        Metadata[key] = value;
+        return this;
+    }
+
+    /// <summary>
+    /// Adds or updates a metadata entry based on a selector function that receives the success flag.
+    /// </summary>
+    /// <param name="key">The key of the metadata entry.</param>
+    /// <param name="valueSelector">A function that selects the metadata value depending on the success of the result.</param>
+    /// <returns>The current <see cref="ServiceResult{TData}"/> instance with the updated metadata.</returns>
+    public new ServiceResult<TData> WithMetadata(string key, Func<bool, string> valueSelector)
+    {
+        Metadata[key] = valueSelector(Success);
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the structured errors for the result.
+    /// </summary>
+    /// <param name="errors">The errors to assign.</param>
+    /// <returns>The current <see cref="ServiceResult{TData}"/> instance with the updated errors.</returns>
+    public new ServiceResult<TData> WithErrors(IEnumerable<ApiError> errors)
+    {
+        Errors = errors;
+        return this;
+    }
 
     /// <summary>
     /// Implicitly converts a <see cref="ServiceResult{TData}"/> to its contained data if the result is successful.
