@@ -52,6 +52,28 @@ jobs:
     - name: Remove Packages
       run: rm -rf *.nupkg ./nupkg
 
+    - name: Generate Release Notes
+      id: release_notes
+      run: |
+        last_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+        range=${last_tag:+$last_tag..HEAD}
+        notes=$(git log $range --no-merges --pretty='- %s' 2>/dev/null)
+        [ -z "$notes" ] && notes="- Maintenance release."
+        {
+          echo "notes<<RELEASE_NOTES_EOF"
+          echo "$notes"
+          echo "RELEASE_NOTES_EOF"
+        } >> "$GITHUB_OUTPUT"
+
     - uses: stefanzweifel/git-auto-commit-action@v5
       with:
         commit_message: Bump Version
+        tagging_message: v${{ env.new_build }}
+
+    - name: Create GitHub Release
+      if: success()
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: v${{ env.new_build }}
+        name: v${{ env.new_build }}
+        body: ${{ steps.release_notes.outputs.notes }}
