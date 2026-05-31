@@ -22,10 +22,23 @@ public class PaginateAttribute : ActionFilterAttribute
 	/// <inheritdoc />
 	public override void OnActionExecuting(ActionExecutingContext context)
 	{
+		// Prefer a bound PaginationParameters action argument; otherwise read page/pageSize straight from the query string
+		// so the attribute works without the action having to declare a PaginationParameters parameter.
 		_paginationParameters = context.ActionArguments.Values.FirstOrDefault(arg => arg is PaginationParameters) as PaginationParameters;
 
-		_paginationParameters ??= new PaginationParameters();
-		_paginationParameters.PageSize = PageSize;
+		if (_paginationParameters == null)
+		{
+			var query = context.HttpContext.Request.Query;
+			_paginationParameters = new PaginationParameters
+			{
+				Page = int.TryParse(query["page"], out var page) ? page : 1,
+				PageSize = int.TryParse(query["pageSize"], out var pageSize) ? pageSize : PageSize
+			};
+		}
+		else
+		{
+			_paginationParameters.PageSize = PageSize;
+		}
 	}
 
 	/// <inheritdoc />
