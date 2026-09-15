@@ -1,5 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Net;
 using System.Security.Claims;
+using Initium.Results;
 using Microsoft.AspNetCore.Http;
 
 namespace Initium.Services;
@@ -42,4 +44,19 @@ public abstract class BaseService
 	}
 
 	protected TValue? GetBinding<TValue>() => Bindings.TryGetValue(typeof(TValue), out var value) ? (TValue)value : default;
+
+	/// <summary>
+	/// A 201 Created result carrying the created resource, with a <c>Location</c> header (the filter writes it from
+	/// metadata) pointing at <paramref name="location"/>.
+	/// </summary>
+	protected ServiceResult<TData> Created<TData>(TData data, string location) => new()
+	{
+		Success = true,
+		Data = data,
+		StatusCode = HttpStatusCode.Created,
+		Metadata = { ["Location"] = location }
+	};
+
+	/// <summary>A 204 No Content result — a successful mutation with no body (e.g. a delete).</summary>
+	protected ServiceResult NoContent() => ServiceResult.Ok(HttpStatusCode.NoContent);
 }
