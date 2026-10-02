@@ -25,4 +25,12 @@ public static class StringExtensions
 	/// <param name="value">The string to check.</param>
 	/// <returns><c>true</c> if the string is empty after trimming; otherwise, <c>false</c>.</returns>
 	public static bool IsEmpty(this string value) => string.IsNullOrWhiteSpace(value.Trim());
+
+	/// <summary>Trims the value, returning null when it is null, empty, or whitespace.</summary>
+	public static string? TrimToNull(this string? value) =>
+		string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+
+	/// <summary>Upper-cases the first character, leaving the rest untouched. Null/blank passes through unchanged.</summary>
+	public static string? Capitalize(this string? value) =>
+		string.IsNullOrWhiteSpace(value) ? value : char.ToUpperInvariant(value[0]) + value[1..];
 }
