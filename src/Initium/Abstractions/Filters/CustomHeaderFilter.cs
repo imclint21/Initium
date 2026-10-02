@@ -1,7 +1,7 @@
 using Initium.Attributes;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Initium.Infrastructure.Filters;
+namespace Initium.Abstractions.Filters;
 
 /// <summary>
 /// Applies <see cref="CustomHeaderAttribute"/> values to the HTTP response headers.

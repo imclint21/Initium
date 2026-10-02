@@ -1,6 +1,6 @@
 using System.Net;
 using Initium.Exceptions;
-using Initium.Infrastructure.Filters;
+using Initium.Abstractions.Filters;
 using Initium.Services;
 using Microsoft.AspNetCore.Mvc;
 

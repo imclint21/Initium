@@ -1,16 +1,16 @@
 using System.Diagnostics;
 using System.Net;
-using Initium.Infrastructure.Helpers;
+using Initium.Abstractions.Helpers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Initium.Infrastructure.Filters;
+namespace Initium.Abstractions.Filters;
 
 /// <summary>
 /// Logs HTTP request details including method, path, status code, and elapsed time.
 /// </summary>
-public class LoggingFilter : IResultFilter
+internal class LoggingFilter : IResultFilter
 {
 	private readonly Stopwatch _stopwatch = Stopwatch.StartNew();
 

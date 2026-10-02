@@ -4,7 +4,7 @@ using Initium.Request;
 using Initium.Response;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Initium.Infrastructure.Filters;
+namespace Initium.Abstractions.Filters;
 
 /// <summary>
 /// A filter that performs implicit validation on actions using requests derived from <see cref="BaseRequestWithValidator{T}"/>.

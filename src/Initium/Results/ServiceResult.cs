@@ -611,7 +611,7 @@ public class ServiceResult<TData> : ServiceResult
 
         // Unwrapping to the bare entity would drop the result's StatusCode + Metadata (where Location lives).
         // Stash them on the current request so ApiResponseMetadataFilter can still apply them to the response.
-        Infrastructure.ApiResponseContext.Stash(StatusCode, Metadata);
+        Abstractions.ApiResponseContext.Stash(StatusCode, Metadata);
         return Data;
     }
 

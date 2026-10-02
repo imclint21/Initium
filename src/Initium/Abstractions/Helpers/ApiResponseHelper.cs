@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Controllers;
 
-namespace Initium.Infrastructure.Helpers;
+namespace Initium.Abstractions.Helpers;
 
 /// <summary>
 /// Provides helper methods for managing API responses and extracting attributes related to API responses.

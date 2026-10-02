@@ -3,7 +3,7 @@ using Initium.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace Initium.Infrastructure.Helpers;
+namespace Initium.Abstractions.Helpers;
 
 /// <summary>
 /// Provides helper methods for logging HTTP request details.

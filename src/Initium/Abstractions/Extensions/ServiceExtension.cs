@@ -2,12 +2,12 @@ using System.Security.Claims;
 using Initium.Services;
 using Microsoft.AspNetCore.Http;
 
-namespace Initium.Infrastructure.Extensions;
+namespace Initium.Abstractions.Extensions;
 
 /// <summary>
 /// Provides extension methods for binding context data to <see cref="BaseService"/> instances.
 /// </summary>
-public static class ServiceExtensions
+internal static class ServiceExtensions
 {
 	/// <summary>
 	/// Binds the authenticated user's <see cref="ClaimsPrincipal"/> to the service.

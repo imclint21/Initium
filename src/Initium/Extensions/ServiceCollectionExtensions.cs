@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
-using Initium.Infrastructure.Results;
-using Initium.Infrastructure.Transformers;
+using Initium.Abstractions.Results;
+using Initium.Abstractions.Transformers;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;

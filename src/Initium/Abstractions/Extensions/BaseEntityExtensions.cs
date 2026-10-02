@@ -1,6 +1,6 @@
 // using Initium.Domain.Entities;
 //
-// namespace Initium.Infrastructure.Extensions;
+// namespace Initium.Abstractions.Extensions;
 //
 // internal static class BaseEntityExtensions
 // {

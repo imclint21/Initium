@@ -1,7 +1,7 @@
 using System.Net;
 using Microsoft.AspNetCore.Http;
 
-namespace Initium.Infrastructure;
+namespace Initium.Abstractions;
 
 /// <summary>
 /// Bridges plain <see cref="Results.ServiceResult"/> data objects to the current request's
@@ -9,7 +9,7 @@ namespace Initium.Infrastructure;
 /// result's <c>StatusCode</c> and <c>Metadata</c>), the unwrap stashes that response metadata here
 /// so <see cref="Filters.ApiResponseMetadataFilter"/> can still write it to the HTTP response.
 /// </summary>
-public static class ApiResponseContext
+internal static class ApiResponseContext
 {
 	private const string StatusCodeKey = "__initium.statusCode";
 	private const string MetadataKey = "__initium.metadata";

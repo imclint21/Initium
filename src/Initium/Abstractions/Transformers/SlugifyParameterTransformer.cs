@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Routing;
 
-namespace Initium.Infrastructure.Transformers;
+namespace Initium.Abstractions.Transformers;
 
 /// <summary>
 /// Transforms PascalCase route parameters into kebab-case (e.g., <c>ProductCategories</c> becomes <c>product-categories</c>).
