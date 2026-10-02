@@ -13,44 +13,30 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    
+      with:
+        fetch-depth: 0
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 10.0.x
 
-    - name: Build
-      run: dotnet build ./src/Initium/Initium.csproj --configuration Release
-
-    - name: Bump Version
+    - name: Compute Version
       run: |
-        chmod +x "${GITHUB_WORKSPACE}/.github/bump.sh"
-        "${GITHUB_WORKSPACE}/.github/bump.sh"
-
-    - name: Pack NuGet Package
-      run: dotnet pack ./src/Initium/Initium.csproj --configuration Release --output ./nupkg
-      
-    - name: Push to NuGet
-      env:
-        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-      run: dotnet nuget push "./nupkg/*.nupkg" --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json --skip-duplicate
-
-    - name: Notify Slack
-      if: success()
-      env:
-        SLACK_WEBHOOKS_URL: ${{ secrets.SLACK_WEBHOOKS_URL }}
-      run: |
-        curl -X POST -H 'Content-type: application/json' --data '{
-          "text": "📦 *Initium* package *v${{ env.new_build }}* has been published to NuGet Packages."
-        }' $SLACK_WEBHOOKS_URL
-
-    - name: Push to GitHub NuGet
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: dotnet nuget push "./nupkg/*.nupkg" --api-key $GITHUB_TOKEN --source "https://nuget.pkg.github.com/imclint21/index.json" --skip-duplicate
-
-    - name: Remove Packages
-      run: rm -rf *.nupkg ./nupkg
+        # Version is derived (never committed, so no "Bump Version" commit and no workflow loop):
+        # patch = commits since the last tag on this prefix. The csproj <Version> holds the prefix (e.g. 0.3);
+        # bump the prefix there to start a new minor/major, and the patch counts commits since its last tag.
+        PREFIX=$(grep -oP '<Version>\K[0-9]+\.[0-9]+' src/Initium/Initium.csproj)
+        LAST_TAG=$(git tag --sort=-v:refname | grep -E "^${PREFIX}\.[0-9]+$" | head -1)
+        if [ -n "$LAST_TAG" ]; then
+          BASE_PATCH=${LAST_TAG##*.}
+          SINCE=$(git rev-list --count "$LAST_TAG"..HEAD)
+          new_version="$PREFIX.$((BASE_PATCH + SINCE))"
+        else
+          new_version="$PREFIX.0"
+        fi
+        echo "new_version=$new_version" >> "$GITHUB_ENV"
+        echo "Building version $new_version"
 
     - name: Generate Release Notes
       id: release_notes
@@ -65,15 +51,43 @@ jobs:
           echo "RELEASE_NOTES_EOF"
         } >> "$GITHUB_OUTPUT"
 
-    - uses: stefanzweifel/git-auto-commit-action@v5
-      with:
-        commit_message: Bump Version
-        tagging_message: v${{ env.new_build }}
+    - name: Build
+      run: dotnet build ./src/Initium/Initium.csproj --configuration Release -p:Version=${{ env.new_version }}
+
+    - name: Pack NuGet Package
+      run: dotnet pack ./src/Initium/Initium.csproj --configuration Release --output ./nupkg -p:Version=${{ env.new_version }}
+
+    - name: Push to NuGet
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+      run: dotnet nuget push "./nupkg/*.nupkg" --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json --skip-duplicate
+
+    - name: Push to GitHub NuGet
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: dotnet nuget push "./nupkg/*.nupkg" --api-key $GITHUB_TOKEN --source "https://nuget.pkg.github.com/imclint21/index.json" --skip-duplicate
+
+    - name: Remove Packages
+      run: rm -rf *.nupkg ./nupkg
 
     - name: Create GitHub Release
-      if: success()
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: v${{ env.new_build }}
-        name: v${{ env.new_build }}
-        body: ${{ steps.release_notes.outputs.notes }}
+        tag_name: ${{ env.new_version }}
+        name: ${{ env.new_version }}
+        body: |
+          ## What's Changed
+
+          ${{ steps.release_notes.outputs.notes }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Notify Slack
+      if: success()
+      continue-on-error: true
+      env:
+        SLACK_WEBHOOKS_URL: ${{ secrets.SLACK_WEBHOOKS_URL }}
+      run: |
+        curl -X POST -H 'Content-type: application/json' --data '{
+          "text": "📦 *Initium* package *v${{ env.new_version }}* has been published to NuGet Packages."
+        }' $SLACK_WEBHOOKS_URL
