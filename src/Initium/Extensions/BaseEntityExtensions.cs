@@ -30,10 +30,9 @@ public static class BaseEntityExtensions
 		source.OrderBy(entity => entity.Weight).ThenBy(entity => entity.CreatedAt);
 
 	/// <summary>
-	/// Marks the entity as changed by setting <see cref="BaseEntity{TKey}.UpdatedAt"/> to the current UTC time.
+	/// Marks the entity as changed by setting <see cref="BaseEntity.UpdatedAt"/> to the current UTC time.
 	/// Useful for bumping the timestamp without the EF save interceptor (e.g. an in-memory mutation).
 	/// </summary>
-	/// <typeparam name="TKey">The type of the entity's primary key.</typeparam>
 	/// <param name="entity">The entity to touch.</param>
-	public static void Touch<TKey>(this BaseEntity<TKey> entity) => entity.UpdatedAt = DateTimeOffset.UtcNow;
+	public static void Touch(this BaseEntity entity) => entity.UpdatedAt = DateTimeOffset.UtcNow;
 }

@@ -6,17 +6,17 @@ using Tapper;
 namespace Initium.Entities;
 
 /// <summary>
-/// Base for entities: a key and creation/update timestamps, plus free-form bookkeeping fields.
+/// Base for entities: a <see cref="Guid"/> key (auto-assigned on creation), creation/update timestamps, and
+/// free-form bookkeeping fields.
 /// </summary>
-/// <typeparam name="TKey">The type of the entity's primary key.</typeparam>
 [TranspilationSource]
-public abstract class BaseEntity<TKey>
+public abstract class BaseEntity
 {
 	// Identity and timestamps lead the JSON; the free-form bookkeeping fields (weight/metadata/tags) sink
 	// below the derived entity's own properties (which sit at the default order of 0).
 	[Key]
 	[JsonPropertyOrder(-3)]
-	public TKey Id { get; set; } = default!;
+	public Guid Id { get; set; } = Guid.NewGuid();
 
 	[JsonPropertyOrder(-2)]
 	public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
@@ -37,11 +37,4 @@ public abstract class BaseEntity<TKey>
 	/// <summary>Free-form tags for grouping/filtering. Null when none.</summary>
 	[JsonPropertyOrder(3)]
 	public string[]? Tags { get; set; }
-}
-
-/// <summary>Base for entities keyed by a <see cref="Guid"/>, auto-assigned on creation.</summary>
-[TranspilationSource]
-public abstract class BaseEntity : BaseEntity<Guid>
-{
-	protected BaseEntity() => Id = Guid.NewGuid();
 }
