@@ -15,6 +15,7 @@ namespace Initium.Controllers;
 [Route("[controller]")]
 [TypeFilter(typeof(ApiExceptionFilter))]
 [TypeFilter(typeof(ApiResponseFilter))]
+[TypeFilter(typeof(ApiResponseMetadataFilter))]
 [TypeFilter(typeof(LoggingFilter))]
 [TypeFilter(typeof(ImplicitValidationFilter))]
 [TypeFilter(typeof(CustomHeaderFilter))]

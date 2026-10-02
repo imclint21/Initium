@@ -604,8 +604,16 @@ public class ServiceResult<TData> : ServiceResult
     /// <exception cref="ApiException">
     /// Thrown if the data is null. The exception includes the provided or default HTTP status code and message.
     /// </exception>
-    public TData UnwrapOrThrow(HttpStatusCode? statusCode = null, string? message = null) =>
-        Data ?? throw new ApiException(statusCode ?? StatusCode ?? HttpStatusCode.InternalServerError, message ?? Message);
+    public TData UnwrapOrThrow(HttpStatusCode? statusCode = null, string? message = null)
+    {
+        if (Data is null)
+            throw new ApiException(statusCode ?? StatusCode ?? HttpStatusCode.InternalServerError, message ?? Message);
+
+        // Unwrapping to the bare entity would drop the result's StatusCode + Metadata (where Location lives).
+        // Stash them on the current request so ApiResponseMetadataFilter can still apply them to the response.
+        Infrastructure.ApiResponseContext.Stash(StatusCode, Metadata);
+        return Data;
+    }
 
     /// <summary>
     /// Returns the data if present, otherwise returns the specified fallback value.

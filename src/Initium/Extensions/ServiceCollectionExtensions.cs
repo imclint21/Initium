@@ -22,6 +22,10 @@ public static class ServiceCollectionExtensions
     /// </summary>
 	public static IServiceCollection AddInitium(this IServiceCollection services)
 	{
+		// Lets ServiceResult.UnwrapOrThrow reach the current HttpContext so it can stash
+		// the result's StatusCode + Metadata (e.g. Location) for the response filter to apply.
+		services.AddHttpContextAccessor();
+
 		services.Configure<MvcOptions>(options =>
 			options.Conventions.Add(new RouteTokenTransformerConvention(new SlugifyParameterTransformer())));
 		
