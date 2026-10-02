@@ -24,14 +24,14 @@ jobs:
     - name: Compute Version
       run: |
         # Version is derived (never committed, so no "Bump Version" commit and no workflow loop):
-        # patch = commits since the last tag on this prefix. The csproj <Version> holds the prefix (e.g. 0.3);
-        # bump the prefix there to start a new minor/major, and the patch counts commits since its last tag.
+        # patch = last tag's patch + 1 on each deploy (one run = one bump, regardless of how many commits
+        # it carries). The csproj <Version> holds the prefix (e.g. 0.3); bump the prefix there to start a
+        # new minor/major, and the patch resets to 0 for a prefix that has no tag yet.
         PREFIX=$(grep -oP '<Version>\K[0-9]+\.[0-9]+' src/Initium/Initium.csproj)
         LAST_TAG=$(git tag --sort=-v:refname | grep -E "^${PREFIX}\.[0-9]+$" | head -1)
         if [ -n "$LAST_TAG" ]; then
           BASE_PATCH=${LAST_TAG##*.}
-          SINCE=$(git rev-list --count "$LAST_TAG"..HEAD)
-          new_version="$PREFIX.$((BASE_PATCH + SINCE))"
+          new_version="$PREFIX.$((BASE_PATCH + 1))"
         else
           new_version="$PREFIX.0"
         fi
