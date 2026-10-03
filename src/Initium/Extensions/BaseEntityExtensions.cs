@@ -35,4 +35,25 @@ public static class BaseEntityExtensions
 	/// </summary>
 	/// <param name="entity">The entity to touch.</param>
 	public static void Touch(this BaseEntity entity) => entity.UpdatedAt = DateTimeOffset.UtcNow;
+
+	/// <summary>Merge-patches an entity's <see cref="BaseEntity.Metadata"/> (RFC 7386): each provided key is written,
+	/// a null value removes the key, and unlisted keys are kept. The dictionary is rebuilt and reassigned (rather
+	/// than mutated in place) because EF doesn't change-track mutations inside a jsonb-mapped object — reassigning
+	/// the property is what marks it modified. Metadata is left null when nothing remains.</summary>
+	/// <param name="entity">The entity whose metadata is patched.</param>
+	/// <param name="patch">The keys to write (non-null value) or remove (null value).</param>
+	public static void MergeMetadata(this BaseEntity entity, Dictionary<string, object?> patch)
+	{
+		var merged = entity.Metadata is null ? [] : new Dictionary<string, object>(entity.Metadata);
+
+		foreach (var (key, value) in patch)
+		{
+			if (value is null)
+				merged.Remove(key);
+			else
+				merged[key] = value;
+		}
+
+		entity.Metadata = merged.Count > 0 ? merged : null;
+	}
 }
