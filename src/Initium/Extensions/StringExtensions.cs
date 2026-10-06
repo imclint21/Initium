@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace Initium.Extensions;
 
 /// <summary>
@@ -33,4 +35,12 @@ public static class StringExtensions
 	/// <summary>Upper-cases the first character, leaving the rest untouched. Null/blank passes through unchanged.</summary>
 	public static string? Capitalize(this string? value) =>
 		string.IsNullOrWhiteSpace(value) ? value : char.ToUpperInvariant(value[0]) + value[1..];
+
+	/// <summary>Title-cases every word: each whitespace-separated word gets an upper-case first letter and
+	/// lower-case rest ("alexei kaarik" and "ALEXEI KAARIK" both become "Alexei Kaarik"). Null/blank passes
+	/// through unchanged. For display names, not identifiers.</summary>
+	public static string? ToTitleCase(this string? value) =>
+		string.IsNullOrWhiteSpace(value)
+			? value
+			: CultureInfo.InvariantCulture.TextInfo.ToTitleCase(value.Trim().ToLowerInvariant());
 }
