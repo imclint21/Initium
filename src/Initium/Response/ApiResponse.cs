@@ -24,15 +24,19 @@ public class ApiResponse
 	/// </summary>
 	public RequestDetails? RequestDetails { get; set; } = new();
 	
-	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	/// <summary>
+	/// Gets or sets the errors associated with the response.
+	/// </summary>
 	public IEnumerable<ApiError>? Errors { get; set; }
 
+	/// <summary>
+	/// Gets or sets custom headers carried with the response but not serialized into the JSON body.
+	/// </summary>
 	[JsonIgnore]
 	public Dictionary<string, string>? CustomHeaders { get; set; }
 
 	/// <summary>
-	/// Gets or sets the data payload of the response. Omitted from JSON when null.
+	/// Gets or sets the data payload of the response.
 	/// </summary>
-	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	public object? Data { get; set; }
 }

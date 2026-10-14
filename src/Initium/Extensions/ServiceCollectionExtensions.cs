@@ -1,6 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using Initium.Abstractions.Results;
+using Initium.Abstractions.Serialization;
 using Initium.Abstractions.Transformers;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -36,6 +38,9 @@ public static class ServiceCollectionExtensions
         {
 	        options.JsonSerializerOptions.WriteIndented = true;
 	        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+	        options.JsonSerializerOptions.TypeInfoResolver =
+		        (options.JsonSerializerOptions.TypeInfoResolver ?? new DefaultJsonTypeInfoResolver())
+		        .WithAddedModifier(ApiResponseJsonModifier.OmitNullProperties);
         });
         
 		services.PostConfigure<ApiBehaviorOptions>(behaviorOptions => 
