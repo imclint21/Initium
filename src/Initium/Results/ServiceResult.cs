@@ -261,11 +261,13 @@ public class ServiceResult : BaseResult
 
     /// <summary>
     /// Implicitly converts an <see cref="HttpResponseMessage"/> to a <see cref="ServiceResult"/>.
-    /// Returns a successful result if the HTTP response indicates success; otherwise, returns a failure.
+    /// Carries the response's status code on both the success and failure paths, so the caller can relay the real
+    /// upstream code (e.g. 201 Created, 204 No Content, 404) rather than collapsing it to 200 or 500.
     /// </summary>
     /// <param name="httpResponseMessage">The HTTP response message to convert.</param>
     /// <returns>A <see cref="ServiceResult"/> representing the success or failure of the HTTP response.</returns>
-    public static implicit operator ServiceResult(HttpResponseMessage httpResponseMessage) => httpResponseMessage.IsSuccessStatusCode;
+    public static implicit operator ServiceResult(HttpResponseMessage httpResponseMessage) =>
+        httpResponseMessage.IsSuccessStatusCode ? Ok(httpResponseMessage.StatusCode) : Error(httpResponseMessage.StatusCode);
     
     /// <summary>
     /// Implicitly converts a <see cref="ServiceResult"/> to its associated <see cref="HttpStatusCode"/>, if any.
@@ -554,21 +556,48 @@ public class ServiceResult<TData> : ServiceResult
     /// <summary>
     /// Implicitly converts an <see cref="HttpResponseMessage"/> to a <see cref="ServiceResult{TData}"/>.
     /// If the HTTP response indicates success, reads and assigns the response content as <typeparamref name="TData"/>.
-    /// Otherwise, sets the <c>Data</c> to <c>default</c>.
+    /// Otherwise, sets the <c>Data</c> to <c>default</c> and relays the upstream error body (<c>Message</c> and
+    /// structured <c>Errors</c>) when it is a standard <see cref="ApiResponse"/>, so the failure detail is not lost.
     /// </summary>
     /// <param name="httpResponseMessage">The HTTP response message to convert.</param>
     /// <returns>
     /// A <see cref="ServiceResult{TData}"/> representing the success or failure of the HTTP response,
-    /// with data deserialized from the response body if successful.
+    /// with data deserialized from the response body if successful, or the upstream error relayed if not.
     /// </returns>
-    public static implicit operator ServiceResult<TData>(HttpResponseMessage httpResponseMessage) => new()
+    public static implicit operator ServiceResult<TData>(HttpResponseMessage httpResponseMessage)
     {
-        Success = httpResponseMessage.IsSuccessStatusCode,
-        StatusCode = httpResponseMessage.StatusCode,
-        Data = httpResponseMessage.IsSuccessStatusCode
-            ? httpResponseMessage.Content.ReadFromJsonAsync<TData>().GetAwaiter().GetResult()
-            : default
-    };
+        if (httpResponseMessage.IsSuccessStatusCode)
+            return new ServiceResult<TData>
+            {
+                Success = true,
+                StatusCode = httpResponseMessage.StatusCode,
+                Data = httpResponseMessage.Content.ReadFromJsonAsync<TData>().GetAwaiter().GetResult()
+            };
+
+        // Relay the upstream error body when it is a standard ApiResponse, so the caller sees what went wrong
+        // instead of a bare status code. A non-ApiResponse body is ignored rather than failing the conversion.
+        var error = TryReadError(httpResponseMessage);
+        return new ServiceResult<TData>
+        {
+            Success = false,
+            StatusCode = httpResponseMessage.StatusCode,
+            Message = error?.Message,
+            Errors = error?.Errors,
+            Data = default
+        };
+    }
+
+    private static ApiResponse? TryReadError(HttpResponseMessage httpResponseMessage)
+    {
+        try
+        {
+            return httpResponseMessage.Content.ReadFromJsonAsync<ApiResponse>().GetAwaiter().GetResult();
+        }
+        catch
+        {
+            return null;
+        }
+    }
 
     /// <summary>
     /// Implicitly converts an <see cref="IdentityResult"/> into a <see cref="ServiceResult{TData}"/>.
