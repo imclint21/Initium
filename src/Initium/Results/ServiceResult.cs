@@ -191,6 +191,19 @@ public class ServiceResult : BaseResult
     }
 
     /// <summary>
+    /// Sets the message only when the result matches the given predicate, leaving it unchanged otherwise.
+    /// </summary>
+    /// <param name="predicate">A predicate evaluated against this result; the message is applied only when it returns <c>true</c>.</param>
+    /// <param name="message">The message to assign when the predicate matches.</param>
+    /// <returns>The current <see cref="ServiceResult"/> instance.</returns>
+    public ServiceResult WithMessage(Func<ServiceResult, bool> predicate, string? message)
+    {
+        if (predicate(this))
+            Message = message;
+        return this;
+    }
+
+    /// <summary>
     /// Sets the status code for the result.
     /// </summary>
     /// <param name="statusCode">The HTTP status code to assign.</param>
@@ -209,6 +222,19 @@ public class ServiceResult : BaseResult
     public ServiceResult WithStatusCode(Func<bool, HttpStatusCode> statusCodeResolver)
     {
         StatusCode = statusCodeResolver(Success);
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the status code only when the result matches the given predicate, leaving it unchanged otherwise.
+    /// </summary>
+    /// <param name="predicate">A predicate evaluated against this result; the status code is applied only when it returns <c>true</c>.</param>
+    /// <param name="statusCode">The status code to assign when the predicate matches.</param>
+    /// <returns>The current <see cref="ServiceResult"/> instance.</returns>
+    public ServiceResult WithStatusCode(Func<ServiceResult, bool> predicate, HttpStatusCode statusCode)
+    {
+        if (predicate(this))
+            StatusCode = statusCode;
         return this;
     }
 
@@ -233,6 +259,20 @@ public class ServiceResult : BaseResult
     public ServiceResult WithMetadata(string key, Func<bool, string> valueSelector)
     {
         Metadata[key] = valueSelector(Success);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds or updates a metadata entry only when the result matches the given predicate, doing nothing otherwise.
+    /// </summary>
+    /// <param name="predicate">A predicate evaluated against this result; the entry is written only when it returns <c>true</c>.</param>
+    /// <param name="key">The key of the metadata entry.</param>
+    /// <param name="value">The value to assign when the predicate matches.</param>
+    /// <returns>The current <see cref="ServiceResult"/> instance.</returns>
+    public ServiceResult WithMetadata(Func<ServiceResult, bool> predicate, string key, string value)
+    {
+        if (predicate(this))
+            Metadata[key] = value;
         return this;
     }
 
@@ -481,6 +521,19 @@ public class ServiceResult<TData> : ServiceResult
     }
 
     /// <summary>
+    /// Sets the message only when the result matches the given predicate, leaving it unchanged otherwise.
+    /// </summary>
+    /// <param name="predicate">A predicate evaluated against this result; the message is applied only when it returns <c>true</c>.</param>
+    /// <param name="message">The message to assign when the predicate matches.</param>
+    /// <returns>The current <see cref="ServiceResult{TData}"/> instance.</returns>
+    public ServiceResult<TData> WithMessage(Func<ServiceResult<TData>, bool> predicate, string? message)
+    {
+        if (predicate(this))
+            Message = message;
+        return this;
+    }
+
+    /// <summary>
     /// Sets the status code for the result.
     /// </summary>
     /// <param name="statusCode">The HTTP status code to assign.</param>
@@ -499,6 +552,19 @@ public class ServiceResult<TData> : ServiceResult
     public new ServiceResult<TData> WithStatusCode(Func<bool, HttpStatusCode> statusCodeResolver)
     {
         StatusCode = statusCodeResolver(Success);
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the status code only when the result matches the given predicate, leaving it unchanged otherwise.
+    /// </summary>
+    /// <param name="predicate">A predicate evaluated against this result; the status code is applied only when it returns <c>true</c>.</param>
+    /// <param name="statusCode">The status code to assign when the predicate matches.</param>
+    /// <returns>The current <see cref="ServiceResult{TData}"/> instance.</returns>
+    public ServiceResult<TData> WithStatusCode(Func<ServiceResult<TData>, bool> predicate, HttpStatusCode statusCode)
+    {
+        if (predicate(this))
+            StatusCode = statusCode;
         return this;
     }
 
@@ -523,6 +589,20 @@ public class ServiceResult<TData> : ServiceResult
     public new ServiceResult<TData> WithMetadata(string key, Func<bool, string> valueSelector)
     {
         Metadata[key] = valueSelector(Success);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds or updates a metadata entry only when the result matches the given predicate, doing nothing otherwise.
+    /// </summary>
+    /// <param name="predicate">A predicate evaluated against this result; the entry is written only when it returns <c>true</c>.</param>
+    /// <param name="key">The key of the metadata entry.</param>
+    /// <param name="value">The value to assign when the predicate matches.</param>
+    /// <returns>The current <see cref="ServiceResult{TData}"/> instance.</returns>
+    public ServiceResult<TData> WithMetadata(Func<ServiceResult<TData>, bool> predicate, string key, string value)
+    {
+        if (predicate(this))
+            Metadata[key] = value;
         return this;
     }
 
